@@ -1,0 +1,1 @@
+curl -u <username>:<password> https://bitbucket.org/api/1.0/repositories/ckarrie/kbs-django-projectplanning/issues
