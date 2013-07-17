@@ -27,9 +27,7 @@ a.btn:link {
     border-left: 2px solid #AAAAAA;
     border-right: 2px solid #AAAAAA;
     border-top: 2px solid #AAAAAA;
-    margin-top: 1em;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 1em auto;
     text-align: left;
     width: 80em;
     font: 90% 'Ubuntu';
@@ -84,6 +82,7 @@ a.btn:link {
 #footer {
     clear: both;
     padding: 1em;
+    font-size: 80%;
 }
 
 #content p {
