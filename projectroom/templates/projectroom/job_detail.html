@@ -99,20 +99,25 @@
 
         {% for ticket in object.get_all_tickets %}
 
-            <tr>
-                <td>#{{ ticket.pk }}</td>
-                <td>
-                    <a href="{{ ticket.job.get_absolute_url }}" title="{% for j in ticket.job.get_ancestors %}{{ j }} &gt {% endfor %} {{ ticket.job }}">
-                    {% for j in ticket.job.get_ancestors %}
-                        {{ j|truncatechars:5 }} &gt;
-                    {% endfor %}
+            {% if user in ticket.get_read_users %}
 
-                    {{ ticket.job }}</a></td>
-                <td><a href="{{ ticket.get_absolute_url }}">{{ ticket.name }}</a></td>
-                <td>{{ ticket.get_status_display }}</td>
-                <td>{{ ticket.request_by }}</td>
-                <td>{{ ticket.assigned_to }}</td>
-            </tr>
+                <tr>
+                    <td>#{{ ticket.pk }}</td>
+                    <td>
+                        <a href="{{ ticket.job.get_absolute_url }}" title="{% for j in ticket.job.get_ancestors %}{{ j }} &gt {% endfor %} {{ ticket.job }}">
+                        {% for j in ticket.job.get_ancestors %}
+                            {{ j|truncatechars:5 }} &gt;
+                        {% endfor %}
+
+                        {{ ticket.job }}</a></td>
+                    <td><a href="{{ ticket.get_absolute_url }}">{{ ticket.name }}</a></td>
+                    <td>{{ ticket.get_status_display }}</td>
+                    <td>{{ ticket.request_by }}</td>
+                    <td>{{ ticket.assigned_to }}</td>
+                </tr>
+
+            {% endif %}
+
         {% empty %}
             <tr>
                 <td colspan="4">Leer :-)</td>

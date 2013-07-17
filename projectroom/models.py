@@ -176,6 +176,12 @@ class Ticket(models.Model):
     def get_costs(self):
         return self.job.rate.hourly_rate * self.duration_pre
 
+    def get_read_users(self):
+        if self.hidden:
+            return [self.assigned_to.user]
+        else:
+            return self.job.project.get_read_users()
+
     def is_closed(self):
         return self.status == 9
 

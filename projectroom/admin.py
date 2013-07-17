@@ -4,6 +4,15 @@ import models
 
 __author__ = 'christian'
 
+def force_save(modeladmin, request, queryset):
+    for obj in queryset:
+        obj.save()
+    text = '%s Objekte gespeichert' % queryset.count()
+
+force_save.short_description = 'Erneut Speichern'
+
+admin.site.add_action(force_save)
+
 admin.site.register(models.Company)
 admin.site.register(models.Person)
 admin.site.register(models.Project)
