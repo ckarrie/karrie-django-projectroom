@@ -1,0 +1,308 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: url('http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/ui-lightness/images/ui-bg_diagonals-thick_20_666666_40x40.png') repeat scroll 50% 50% #666666;
+    text-align: center;
+}
+
+a:link {color:#0099ff; text-decoration: none; }      /* unvisited link */
+a:visited {color:#0099ff;}  /* visited link */
+a:hover {color:#f00; text-decoration: underline}  /* mouse over link */
+a:active {color:#b00;}  /* selected link */
+
+a.btn:link {
+    text-shadow: none;
+    font-size: 90%;
+}
+
+.ui-widget {
+    font-size: 90% !important;
+}
+
+#page {
+    background-color: #FFF;
+    border-left: 2px solid #AAAAAA;
+    border-right: 2px solid #AAAAAA;
+    border-top: 2px solid #AAAAAA;
+    margin-top: 1em;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+    width: 80em;
+    font: 90% 'Ubuntu';
+    font-weight: 300;
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+}
+
+#page h1 {
+    color: #0099ff;
+}
+
+#top h2 {
+    padding: 1em 0;
+}
+
+#top {
+    border-bottom: 2px solid #AAAAAA;
+    height: 10em;
+    padding: 1em;
+    color: #fff;
+}
+
+#content h2 {
+    padding: 0.5em 0;
+    font-style: italic;
+    border-bottom: 1px dotted #a9a9a9;
+}
+
+#menu {
+    border-bottom: 2px solid #AAAAAA;
+    padding: 1em;
+}
+
+#content {
+    border-bottom: 2px solid #AAAAAA;
+    padding: 1em;
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+}
+
+#sidebar {
+    border-left: 2px solid #AAAAAA;
+    float: right;
+    padding: 1em;
+    width: 15em;
+    border-bottom: 2px solid #AAAAAA;
+}
+
+#footer {
+    clear: both;
+    padding: 1em;
+}
+
+#content p {
+    padding: 1em 0;
+    margin: 0 0 0 1em;
+}
+
+#content table tr td, #content table tr th {
+    padding: 1em;
+}
+
+#content table tr th {
+    font-family: 'Ubuntu Condensed';
+}
+
+#content ul {
+    padding-left: 1em;
+}
+.breadcrumb {
+    list-style: none;
+    overflow: hidden;
+    font-size: 12px;
+    font-weight: 400;
+    padding: 0 !important;
+    margin: 1em 0;
+    border-top: 1px solid brown;
+    border-bottom: 1px solid brown;
+}
+
+.breadcrumb li {
+    float: left;
+}
+
+.breadcrumb img {
+    padding: 0;
+    margin: 0;
+}
+
+.breadcrumb li a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 0 10px 55px;
+    background: brown;                   /* fallback color */
+    background: hsla(34,85%,35%,1);
+    position: relative;
+    display: block;
+    float: left;
+}
+.breadcrumb li a:after {
+    content: " ";
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: 50px solid transparent;           /* Go big on the size, and let overflow hide */
+    border-bottom: 50px solid transparent;
+    border-left: 30px solid hsla(34,85%,35%,1);
+    position: absolute;
+    top: 50%;
+    margin-top: -50px;
+    left: 100%;
+    z-index: 2;
+}
+.breadcrumb li a:before {
+    content: " ";
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: 50px solid transparent;           /* Go big on the size, and let overflow hide */
+    border-bottom: 50px solid transparent;
+    /*border-left: 30px solid white;*/
+    position: absolute;
+    top: 50%;
+    margin-top: -50px;
+    margin-left: 1px;
+    left: 100%;
+    /*z-index: 1;*/
+}
+.breadcrumb li:first-child a {
+    padding-left: 10px;
+}
+.breadcrumb li:nth-child(2) a       { background:        hsl(33, 83%, 45%); }
+.breadcrumb li:nth-child(2) a:after { border-left-color: hsl(33, 83%, 45%); }
+.breadcrumb li:nth-child(3) a       { background:        hsl(33, 83%, 55%); }
+.breadcrumb li:nth-child(3) a:after { border-left-color: hsl(33, 83%, 55%); }
+.breadcrumb li:nth-child(4) a       { background:        hsl(33, 83%, 65%); }
+.breadcrumb li:nth-child(4) a:after { border-left-color: hsl(33, 83%, 65%); }
+.breadcrumb li:nth-child(5) a       { background:        hsl(33, 83%, 75%); }
+.breadcrumb li:nth-child(5) a:after { border-left-color: hsl(33, 83%, 75%); }
+.breadcrumb li:last-child a {
+    background: white !important;
+    color: black;
+    pointer-events: none;
+    cursor: default;
+}
+.breadcrumb li:last-child a:after { border: 0; }
+.breadcrumb li a:hover { background: hsl(35, 100%, 58%); }
+.breadcrumb li a:hover:after { border-left-color: hsl(35, 100%, 58%) !important; }
+
+ul.default {
+    margin: 1em;
+}
+
+ul.default li {
+    padding: 0.5em;
+}
+
+#content td {
+    vertical-align: top;
+}
+
+#content td ul.default {
+    margin: 0;
+}
+
+#content td ul.default > li {
+    padding-top: 0;
+}
+
+.ticketitemmeta {
+    font-size: 8pt;
+    color: #aaa;
+    font-family: 'Ubuntu Condensed';
+}
+
+form input[type=submit] {
+    margin-top: 1em;
+}
+
+pre {
+    font-family: 'Ubuntu Mono';
+    border: 1px solid #4a4a4a;
+    background-color: #aaa;
+    color: #fff;
+    padding: 1em;
+    margin: 0.7em 0;
+    -webkit-box-shadow:  2px 2px 6px 1px #4a4a4a;
+    box-shadow:  2px 2px 6px 1px #4a4a4a;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+}
+
+.box-shadow {
+    -webkit-box-shadow:  2px 2px 10px 1px #4a4a4a;
+    box-shadow:  2px 2px 10px 1px #4a4a4a;
+}
+
+pre.statuschange {
+    border: 1px solid #bbb;
+    background-color: #ddd;
+    color: #4a4a4a;
+}
+
+
+
+ul.tickets li {
+    background: url('icons/Neu/22x22/mimetypes/document.png') no-repeat left center;
+    padding-left: 25px;
+    list-style: none;
+}
+
+
+.djangoform th {
+    text-align: right;
+    padding: 8px;
+    vertical-align: top;
+    white-space: normal;
+    font-family: 'Ubuntu Condensed';
+    font-weight: 300;
+}
+
+.djangoform td {
+    text-align: left;
+    padding: 5px 10px 5px 5px;
+    vertical-align: top;
+}
+
+.djangoform label {
+    /*white-space: nowrap;*/
+}
+
+.djangoform .help_text {
+    font-size: 9pt;
+    vertical-align: top;
+    white-space: normal;
+    width: 300px;
+}
+
+.djangoform .errorlist {
+    color: #f3f6f7;
+    padding: 5px;
+    background-color: #2897e5;
+    margin: 0 0 15px 0;
+}
+
+.djangoform input, .djangoform textarea, .djangoform select {
+    border: 1px solid #2897e5;
+    padding: 2px;
+    font-family: 'Ubuntu Condensed';
+    min-width: 300px;
+}
+
+.djangoform input[type=checkbox] {
+    min-width: 10px;
+}
+
+.djangoform option {
+    padding: 2px 5px;
+    font-family: 'Ubuntu Condensed';
+}
+
+.djangoform p.description {
+    padding: 0 5px;
+    font-size: 9pt;
+}
+
+.djangoform tr.legend th, .djangoform tr.legend td {
+    border-bottom: 1px dashed #2897e5;
+}
+
+.djangoform input:focus, .djangoform select:focus {
+    border-color: #ff5500;
+}

@@ -1,0 +1,31 @@
+<table class="djangoform">
+    {% if form.non_field_errors %}
+        <tr>
+            <th>Es sind Fehler aufgetreten:</th>
+            <td><p class="error">{{ form.non_field_errors }}</p></td>
+        </tr>
+    {% endif %}
+    {% for field in form %}
+        {% if field.is_hidden %}
+            {{ field }}
+        {% else %}
+            <tr>
+                <th>{{ field.label_tag }}{% if field.field.required %} *){% endif %}</th>
+                <td>{{ field }}
+                    {% if not form.avoid_html_error %}
+                        {% if field.errors %}
+                            <ul class="default">
+                                {% for error in field.errors %}
+                                    <li><p class="error">{{ error|escape }}</p></li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    {% endif %}
+                    <p class="help_text">{{ field.help_text }}</p></td>
+            </tr>
+        {% endif %}
+    {% endfor %}
+    <tr>
+        <td colspan="2"><p>*) zwingend</p></td>
+    </tr>
+</table>

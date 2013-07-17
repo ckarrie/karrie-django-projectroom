@@ -1,0 +1,70 @@
+{% extends 'projectroom/base.html' %}
+
+{% block breadcrumbs %}
+    <li><a href="{{ object.job.project.get_absolute_url }}">{{ object.job.project }}</a></li>
+    {% for parent in object.job.get_ancestors %}
+        <li>
+            <a href="{{ parent.get_absolute_url }}">{{ parent.name }}</a>
+        </li>
+    {% endfor %}
+    <li><a href="{{ object.job.get_absolute_url }}">{{ object.job }}</a></li>
+    <li><a href="">{{ object }}</a></li>
+{% endblock %}
+
+{% block content %}
+
+    <h2>Ticket #{{ object.pk }}: {{ object.name }}</h2>
+
+    <table>
+        <tr>
+            <th>Status</th>
+            <td>{{ object.get_status_display }} ({{ object.progress|floatformat }}%)</td>
+            <th>Auftraggeber</th>
+            <td>{{ object.request_by }}</td>
+        </tr>
+        <tr>
+            <th>Veranschlagte Zeit</th>
+            <td>{{ object.duration_pre }}h</td>
+            <th>Auftragnehmer</th>
+            <td>{{ object.assigned_to }}</td>
+        </tr>
+
+    </table>
+
+    <h2>Kosten</h2>
+    <p>Tarif: {{ object.job.rate }}, Konto: {{ object.job.account }} ({{ object.job.account.balance }})</p>
+    <pre>Veranschlagung: {{ object.duration_pre }}h * {{ object.job.rate }} = {{ object.get_costs }} {{ object.job.rate.get_currency_display }}</pre>
+
+    <h2>Verlauf</h2>
+
+
+
+    {% for item in object.ticketitem_set.all %}
+        <p class="ticketitemmeta">Erstellt vor {{ item.created|timesince }} von {{ item.creator }}</p>
+        {% for text in item.tickettext_set.all %}
+            <pre>{{ text.text }}</pre>
+        {% endfor %}
+
+        {% for sc in item.ticketstatuschange_set.all %}
+            <pre class="statuschange">Der Status wurde von {{ sc.get_pre_status_display }} auf {{ sc.get_post_status_display }} geändert.</pre>
+        {% endfor %}
+
+        {% for tae in item.ticketaccountentry_set.all %}
+            <pre class="accountentry">Abbuchung von {{ tae.accountentry.value }} {{ tae.accountentry.account.get_currency_display }} von Konto {{ tae.accountentry.account }}</pre>
+        {% endfor %}
+
+    {% empty %}
+        <p>Es existiert keine Ticketbeschreibung</p>
+    {% endfor %}
+
+
+    <h2>Ticketeintrag hinzufügen</h2>
+    <form action="{% url 'ticketitem_add' project__slug=object.job.project.slug job__pk=object.job.pk pk=object.pk %}" method="post">
+        {% csrf_token %}
+        {% include 'projectroom/includes/djangoform_table.html' with form=ticket_form %}
+        <input class="btn" type="submit" value="Speichern" />
+    </form>
+
+
+
+{% endblock %}

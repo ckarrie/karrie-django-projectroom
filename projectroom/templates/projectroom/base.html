@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PR</title>
+    <link rel="stylesheet" href="{{ STATIC_URL }}projectroom/base.css" type="text/css">
+    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/ui-lightness/jquery-ui.css" type="text/css">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <link href='http://fonts.googleapis.com/css?family=Ubuntu:400,300|Ubuntu+Condensed|Ubuntu+Mono' rel='stylesheet' type='text/css'>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('.btn').button();
+            $('#tabs').tabs();
+            $('a[title]').tooltip();
+        });
+    </script>
+    {% block js %}
+    {% endblock js %}
+</head>
+<body>
+<div id="page">
+    <div id="menu">
+    <p>
+        {% if user.is_authenticated %}
+        Angemeldet als {{ user }}. <a href="{% url 'pr_logout' %}">Abmelden </a>
+        {% else %}
+        Sie sind nicht angemeldet. <a href="{% url 'pr_login' %}">Anmelden </a>
+        {% endif %}
+    </p>
+
+    </div>
+    <div id="content">
+
+        <h1>Projektraum</h1>
+
+
+
+        <ul class="breadcrumb">
+            <li><a href="{% url 'project_list' %}">Start</a></li>
+            {% block breadcrumbs %}
+            {% endblock breadcrumbs %}
+        </ul>
+
+        {% block content %}
+        {% endblock content %}
+
+
+
+    </div>
+</div>
+</body>
+</html>

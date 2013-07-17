@@ -1,0 +1,35 @@
+{% extends 'projectroom/base.html' %}
+
+{% block breadcrumbs %}
+    <li><a href="">Auftragsliste</a></li>
+{% endblock %}
+
+{% block content %}
+
+    <h2>Auftragsliste</h2>
+
+    <table>
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Firma</th>
+            <th>Projekt</th>
+            <th>Auftrag</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        {% for job in object_list %}
+
+            <tr>
+                <td>#{{ job.pk }}</td>
+                <td>{{ job.project.client_company }}</td>
+                <td>{{ job.project.name }}</td>
+                <td><a style="padding-left: {{ job.level }}em;" href="{{ job.get_absolute_url }}">{{ job }}</a></td>
+            </tr>
+
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

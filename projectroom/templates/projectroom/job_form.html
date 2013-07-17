@@ -1,0 +1,17 @@
+{% extends 'projectroom/base.html' %}
+
+
+{% block content %}
+
+    <h2>Auftrag-Details bearbeiten</h2>
+
+    <form action="{{ object.get_edit_url }}" method="post" class="djangoform">
+
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <input type="submit" value="Speichern" />
+
+    </form>
+
+{% endblock %}

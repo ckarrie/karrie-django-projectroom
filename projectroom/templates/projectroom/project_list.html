@@ -1,0 +1,55 @@
+{% extends 'projectroom/base.html' %}
+{% load mptt_tags %}
+
+{% block breadcrumbs %}
+
+{% endblock %}
+
+{% block content %}
+
+    <h2>Dashboard</h2>
+
+    <table>
+    <thead>
+    <tr>
+        <th>Firma</th>
+        <th>Projekt</th>
+        <th>offene Aufträge</th>
+        <th>Aufträge und Tickets</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    {% for project in object_list %}
+
+        <tr>
+            <td>{{ project.client_company }}</td>
+            <td>{{ project.name }}</td>
+            <td><a href="{% url 'job_list' project__slug=project.slug %}">{{ project.job_set.open.count }}</a></td>
+            <td>
+                <ul class="default">
+                    {% recursetree project.job_set.all %}
+                        <li>
+                            <a href="{{ node.get_absolute_url }}">{{ node.name }}</a>
+                            <ul class="tickets">
+                                {% for ticket in node.ticket_set.active %}
+                                    <li><a href="{{ ticket.get_absolute_url }}">{{ ticket }}</a> ({{ ticket.progress|floatformat }}%, noch {{ ticket.job.deadline|timeuntil }})</li>
+                                {% endfor %}
+                            </ul>
+
+                            {% if not node.is_leaf_node %}
+                                <ul class="children">
+                                    {{ children }}
+                                </ul>
+                            {% endif %}
+                        </li>
+                    {% endrecursetree %}
+                </ul>
+            </td>
+        </tr>
+
+    {% endfor %}
+    </tbody>
+    </table>
+
+{% endblock %}

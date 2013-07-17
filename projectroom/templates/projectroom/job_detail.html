@@ -1,0 +1,124 @@
+{% extends 'projectroom/base.html' %}
+{% load mptt_tags %}
+
+{% block breadcrumbs %}
+    <li><a href="{% url 'project_list' %}">{{ object.project }}</a></li>
+    {% for parent in object.get_ancestors %}
+        <li>
+            <a href="{{ parent.get_absolute_url }}">{{ parent.name }}</a>
+        </li>
+    {% endfor %}
+    <li><a href="">{{ object }}</a></li>
+{% endblock %}
+
+{% block js %}
+
+{% endblock js %}
+
+{% block content %}
+
+    <div id="tabs">
+        <ul>
+            <li><a href="#details">Auftrags-Details</a></li>
+            <li><a href="#filter">Filter nach Folgeaufträge / Teilaufträge ({{ object.get_descendant_count }})</a></li>
+        </ul>
+
+        <div id="details">
+        <h2>Auftrag-Details</h2>
+
+        <table>
+            <tr>
+                <th>Auftragsname</th>
+                <td>{{ object.name }}</td>
+            </tr>
+            <tr>
+                <th>Auftragbeschreibung</th>
+                <td>{{ object.description }}</td>
+            </tr>
+            <tr>
+                <th>Deadline</th>
+                <td>{{ object.deadline|timeuntil }} ({{ object.deadline|date:'SHORT_DATETIME_FORMAT' }})</td>
+            </tr>
+            <tr>
+                <th>Tarif</th>
+                <td>{{ object.rate }}</td>
+            </tr>
+            <tr>
+                <td colspan="2"><a href="{{ object.get_edit_url }}" class="btn">Auftragsdetails bearbeiten</a></td>
+            </tr>
+        </table>
+
+        </div>
+
+
+        <div id="filter">
+        <h2>Filter nach Folgeaufträge / Teilaufträge ({{ object.get_descendant_count }})</h2>
+
+        {% if object.get_descendants %}
+            <ul class="default">
+                {% recursetree object.get_descendants %}
+                    <li>
+
+                        <a href="{{ node.get_absolute_url }}">{{ node.name }}</a>
+
+
+                        {% if not node.is_leaf_node %}
+                            <ul class="children">
+                                {{ children }}
+                            </ul>
+                        {% endif %}
+                    </li>
+                {% endrecursetree %}
+            </ul>
+        {% else %}
+            <p>Keine</p>
+        {% endif %}
+
+        <p><a class="btn" href="{{ object.get_root.get_absolute_url }}">Filter zurücksetzen</a></p>
+        </div>
+    </div>
+
+
+
+    <h2>Tickets innerhalb {{ object.name }} ({{ object.get_all_tickets.count }})</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Auftrag</th>
+            <th>Name</th>
+            <th>Status</th>
+            <th>AG</th>
+            <th>AN</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        {% for ticket in object.get_all_tickets %}
+
+            <tr>
+                <td>#{{ ticket.pk }}</td>
+                <td>
+                    <a href="{{ ticket.job.get_absolute_url }}" title="{% for j in ticket.job.get_ancestors %}{{ j }} &gt {% endfor %} {{ ticket.job }}">
+                    {% for j in ticket.job.get_ancestors %}
+                        {{ j|truncatechars:5 }} &gt;
+                    {% endfor %}
+
+                    {{ ticket.job }}</a></td>
+                <td><a href="{{ ticket.get_absolute_url }}">{{ ticket.name }}</a></td>
+                <td>{{ ticket.get_status_display }}</td>
+                <td>{{ ticket.request_by }}</td>
+                <td>{{ ticket.assigned_to }}</td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="4">Leer :-)</td>
+            </tr>
+        {% endfor %}
+            <tr>
+                <td colspan="4"><a class="btn" href="{% url 'ticket_add' project__slug=object.project.slug pk=object.pk %}">Ticket erstellen</a></td>
+            </tr>
+        </tbody>
+    </table>
+
+{% endblock %}

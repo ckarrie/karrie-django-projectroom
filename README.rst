@@ -11,15 +11,18 @@ Quick start
 
       hg clone https://bitbucket.org/ckarrie/karrie-django-projectroom
 
-2. Install with pip
+2. Install requirements with pip
 
-      sudo pip install -e karrie-django-projectroom
+      pip install -e karrie-django-projectroom
+      pip install git+https://github.com/django-mptt/django-mptt.git
+      pip install git+https://github.com/brack3t/django-braces.git
 
 3. Add "jobs" to your INSTALLED_APPS setting like this::
 
       INSTALLED_APPS = (
           ...
           'projectroom',
+          'mptt',
       )
 
 4. Include the simplegeo URLconf in your project urls.py like this::

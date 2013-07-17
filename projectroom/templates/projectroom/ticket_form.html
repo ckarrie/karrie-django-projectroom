@@ -1,0 +1,22 @@
+{% extends 'projectroom/base.html' %}
+{% load mptt_tags %}
+
+{% block breadcrumbs %}
+
+{% endblock %}
+
+{% block content %}
+
+    {% if form.instance %}
+        <h2>Ticket bearbeiten</h2>
+    {% else %}
+        <h2>Ticket erstellen</h2>
+    {% endif %}
+
+    <form action="" method="post">
+        {% csrf_token %}
+        {% include 'projectroom/includes/djangoform_table.html' with form=form %}
+        <input class="btn" type="submit" value="Speichern" />
+    </form>
+
+{% endblock %}
