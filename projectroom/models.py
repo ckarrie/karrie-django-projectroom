@@ -10,8 +10,6 @@ from mptt.models import TreeForeignKey, MPTTModel, TreeManager
 # python imports
 import datetime
 
-#
-
 
 JOB_STATUS_CHOICES = (
     (1, _('Requested by Customer')),
@@ -152,7 +150,7 @@ class Job(MPTTModel):
 
 class TicketManager(models.Manager):
     def active(self):
-        return self.filter(status__lt = JOB_STATUS_LEN)
+        return self.filter(status__lt = JOB_STATUS_LEN, hidden=False)
 
 class Ticket(models.Model):
     job = models.ForeignKey(Job)
@@ -163,6 +161,8 @@ class Ticket(models.Model):
     assigned_to = models.ForeignKey(Person, related_name='assigned_tickets', null=True, blank=True)
     duration_pre = models.IntegerField(null=True, blank=True)
     duration_post = models.IntegerField(null=True, blank=True)
+
+    hidden = models.BooleanField(default=False)
 
     objects = TicketManager()
 
@@ -192,7 +192,7 @@ class TicketItem(models.Model):
     created = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
-        return _("%s: %s %s") % (self.ticket.name, self.creator, self.created)
+        return _("%(ticket_name)s: %(creator)s %(created)s") % {'ticket_name': self.ticket.name, 'creator': self.creator, 'created': self.created}
 
 class TicketText(models.Model):
     item = models.ForeignKey(TicketItem)
@@ -209,7 +209,7 @@ class TicketStatusChange(models.Model):
         self.item.ticket.save()
 
     def __unicode__(self):
-        return _("%s: %s > %s") % (self.item.ticket.name, self.pre_status, self.post_status)
+        return _("%(ticket_name)s: %(pre)s > %(post)s") % {'ticket_name': self.item.ticket.name, 'pre': self.pre_status, 'post': self.post_status}
 
 class TicketAccountEntry(models.Model):
     item = models.ForeignKey(TicketItem)

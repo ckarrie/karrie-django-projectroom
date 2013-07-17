@@ -1,4 +1,4 @@
-from django.core.urlresolvers import reverse
+from django.http import Http404
 from django.views import generic
 from django.db.models import Q
 
@@ -41,6 +41,13 @@ class JobUpdateView(LoginRequiredView, generic.UpdateView):
 
 class TicketDetailView(LoginRequiredView, generic.DetailView):
     model = models.Ticket
+
+    def get_object(self, queryset=None):
+        obj = super(TicketDetailView, self).get_object(queryset)
+        person = models.Person.objects.get(user=self.request.user),
+        if obj.hidden and person != obj.assigned_to:
+            raise Http404
+        return obj
 
     def get_context_data(self, **kwargs):
         kwargs.update({

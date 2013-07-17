@@ -1,0 +1,83 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Christian Karrie <ckarrie@gmail.com>, 2013.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-07-17 20:49+0200\n"
+"PO-Revision-Date: 2013-07-17 20:47+0200\n"
+"Last-Translator: Christian Karrie <ckarrie@gmail.com>\n"
+"Language-Team: Deutsch <>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Gtranslator 2.91.6\n"
+
+#: models.py:15
+msgid "Requested by Customer"
+msgstr "Anfrage von AG"
+
+#: models.py:16
+msgid "Seen by Worker"
+msgstr "Gesehen von AN"
+
+#: models.py:17
+msgid "Started by Worker"
+msgstr "Gestartet von AN"
+
+#: models.py:18
+msgid "Cancelled by Worker"
+msgstr "Abgebrochen von AN"
+
+#: models.py:19
+msgid "Cancelled by Customer"
+msgstr "Abgebrochen von AG"
+
+#: models.py:20
+msgid "Waiting for Approval by Customer"
+msgstr "Warten auf Prüfung des AG"
+
+#: models.py:21
+msgid "Approved by Customer"
+msgstr "Geprüft von AG"
+
+#: models.py:22
+msgid "Worker waiting to get Payed"
+msgstr "AN wartet auf Bezahlung"
+
+#: models.py:23
+msgid "Closed and finished by Worker"
+msgstr "Beendet von AN"
+
+#: models.py:29
+msgid "Euro"
+msgstr "€"
+
+#: models.py:30
+msgid "Swiss Francs"
+msgstr "CHF"
+
+#: models.py:82 models.py:103
+msgid "Currency"
+msgstr "Währung"
+
+#: models.py:107
+#, python-format
+msgid "%(hr)s %(c)s/h"
+msgstr "%(hr)s %(c)s/Std."
+
+#: models.py:195
+#, python-format
+msgid "%(ticket_name)s: %(creator)s %(created)s"
+msgstr "%(ticket_name)s: %(creator)s %(created)s"
+
+#: models.py:212
+#, python-format
+msgid "%(ticket_name)s: %(pre)s > %(post)s"
+msgstr "%(ticket_name)s: %(pre)s > %(post)s"
