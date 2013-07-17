@@ -77,3 +77,7 @@ class TicketForm(forms.ModelForm):
 
     class Meta:
         model = models.Ticket
+
+class JobForm(forms.ModelForm):
+    class Meta:
+        model = models.Job

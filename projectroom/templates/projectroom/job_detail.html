@@ -37,15 +37,18 @@
             </tr>
             <tr>
                 <th>Deadline</th>
-                <td>{{ object.deadline|timeuntil }} ({{ object.deadline|date:'SHORT_DATETIME_FORMAT' }})</td>
+                <td>in {{ object.deadline|timeuntil }} ({{ object.deadline|date:'SHORT_DATETIME_FORMAT' }})</td>
             </tr>
+            {% if user in object.project.get_write_users  %}
             <tr>
                 <th>Tarif</th>
                 <td>{{ object.rate }}</td>
             </tr>
+
             <tr>
                 <td colspan="2"><a href="{{ object.get_edit_url }}" class="btn">Auftragsdetails bearbeiten</a></td>
             </tr>
+            {% endif %}
         </table>
 
         </div>

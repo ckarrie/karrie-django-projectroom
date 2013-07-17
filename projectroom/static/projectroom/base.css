@@ -236,7 +236,9 @@ pre.statuschange {
     color: #4a4a4a;
 }
 
-
+ul.tickets {
+    margin: 1em 0;
+}
 
 ul.tickets li {
     background: url('icons/Neu/22x22/mimetypes/document.png') no-repeat left center;
@@ -244,6 +246,9 @@ ul.tickets li {
     list-style: none;
 }
 
+.small {
+    font-size: 70%;
+}
 
 .djangoform th {
     text-align: right;

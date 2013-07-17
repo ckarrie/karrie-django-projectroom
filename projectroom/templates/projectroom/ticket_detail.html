@@ -32,7 +32,7 @@
     </table>
 
     <h2>Kosten</h2>
-    <p>Tarif: {{ object.job.rate }}, Konto: {{ object.job.account }} ({{ object.job.account.balance }})</p>
+    <p>Tarif: {{ object.job.rate }}, Konto: {{ object.job.account }} (Stand: {{ object.job.account.balance }} {{ object.job.account.get_currency_display }})</p>
     <pre>Veranschlagung: {{ object.duration_pre }}h * {{ object.job.rate }} = {{ object.get_costs }} {{ object.job.rate.get_currency_display }}</pre>
 
     <h2>Verlauf</h2>
@@ -58,12 +58,20 @@
     {% endfor %}
 
 
+
     <h2>Ticketeintrag hinzufügen</h2>
-    <form action="{% url 'ticketitem_add' project__slug=object.job.project.slug job__pk=object.job.pk pk=object.pk %}" method="post">
-        {% csrf_token %}
-        {% include 'projectroom/includes/djangoform_table.html' with form=ticket_form %}
-        <input class="btn" type="submit" value="Speichern" />
-    </form>
+    {% if user in object.job.project.get_read_users %}
+
+
+        <form action="{% url 'ticketitem_add' project__slug=object.job.project.slug job__pk=object.job.pk pk=object.pk %}" method="post">
+            {% csrf_token %}
+            {% include 'projectroom/includes/djangoform_table.html' with form=ticket_form %}
+            <input class="btn" type="submit" value="Speichern" />
+        </form>
+
+    {% else %}
+        <p>Zugriff verweigert.</p>
+    {% endif %}
 
 
 

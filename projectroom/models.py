@@ -14,22 +14,22 @@ import datetime
 
 
 JOB_STATUS_CHOICES = (
-    (1, 'Requested by Customer'),
-    (2, 'Seen by Worker'),
-    (3, 'Started by Worker'),
-    (4, 'Cancelled by Worker'),
-    (5, 'Cancelled by Customer'),
-    (6, 'Waiting for Approval by Customer'),
-    (7, 'Approved by Customer'),
-    (8, 'Worker waiting to get Payed'),
-    (9, 'Closed and finished by Worker')
+    (1, _('Requested by Customer')),
+    (2, _('Seen by Worker')),
+    (3, _('Started by Worker')),
+    (4, _('Cancelled by Worker')),
+    (5, _('Cancelled by Customer')),
+    (6, _('Waiting for Approval by Customer')),
+    (7, _('Approved by Customer')),
+    (8, _('Worker waiting to get Payed')),
+    (9, _('Closed and finished by Worker'))
 )
 
 JOB_STATUS_LEN = len(JOB_STATUS_CHOICES)
 
 CURRENCY_CHOICES = (
-    ('EUR', 'Euro'),
-    ('CHF', 'Swiss Francs'),
+    ('EUR', _('Euro')),
+    ('CHF', _('Swiss Francs')),
 )
 
 
@@ -64,6 +64,12 @@ class Project(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField()
     active = models.BooleanField(default=True)
+
+    def get_read_users(self):
+        return User.objects.filter(person__project_readacl=self)
+
+    def get_write_users(self):
+        return User.objects.filter(person__project_writeacl=self)
 
     def __unicode__(self):
         return self.name
@@ -169,6 +175,9 @@ class Ticket(models.Model):
 
     def get_costs(self):
         return self.job.rate.hourly_rate * self.duration_pre
+
+    def is_closed(self):
+        return self.status == 9
 
     def __unicode__(self):
         return self.name

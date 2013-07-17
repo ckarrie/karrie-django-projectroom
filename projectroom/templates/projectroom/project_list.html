@@ -30,10 +30,12 @@
                 <ul class="default">
                     {% recursetree project.job_set.all %}
                         <li>
-                            <a href="{{ node.get_absolute_url }}">{{ node.name }}</a>
+                            <a href="{{ node.get_absolute_url }}">
+                                {{ node.name }}
+                            </a>
                             <ul class="tickets">
                                 {% for ticket in node.ticket_set.active %}
-                                    <li><a href="{{ ticket.get_absolute_url }}">{{ ticket }}</a> ({{ ticket.progress|floatformat }}%, noch {{ ticket.job.deadline|timeuntil }})</li>
+                                    <li><a href="{{ ticket.get_absolute_url }}">{{ ticket }}</a> <span class="small"> ({{ ticket.get_status_display }})</span></li>
                                 {% endfor %}
                             </ul>
 

@@ -35,7 +35,9 @@ class JobDetailView(LoginRequiredView, generic.DetailView):
     model = models.Job
 
 class JobUpdateView(LoginRequiredView, generic.UpdateView):
+    form_class = forms.JobForm
     model = models.Job
+
 
 class TicketDetailView(LoginRequiredView, generic.DetailView):
     model = models.Ticket

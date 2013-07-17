@@ -8,7 +8,7 @@
     <form action="{{ object.get_edit_url }}" method="post" class="djangoform">
 
         {% csrf_token %}
-        {{ form.as_p }}
+        {% include 'projectroom/includes/djangoform_table.html' %}
 
         <input type="submit" value="Speichern" />
 
