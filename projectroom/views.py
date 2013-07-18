@@ -37,8 +37,10 @@ class JobListView(LoginRequiredView, generic.ListView):
     def get_queryset(self):
         user = self.request.user
         qs = super(JobListView, self).get_queryset()
-        qs = qs.filter(Q(project__read_acl__user=user) | Q(project__write_acl__user=user)).distinct()
-        #project__slug = self.kwargs.get('project__slug'))
+        qs = qs.filter(
+            Q(project__read_acl__user=user) | Q(project__write_acl__user=user),
+            project__slug = self.kwargs.get('project__slug')
+        ).distinct()
 
         return qs
 

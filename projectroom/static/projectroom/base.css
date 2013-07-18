@@ -57,6 +57,7 @@ h3 {
 
 .ticketitem {
     margin-bottom: 1em;
+    padding-bottom: 1em;
     border-bottom: 1px dotted #eee;
 }
 
@@ -69,17 +70,27 @@ h3 {
     font-family: 'Ubuntu';
 }
 
-.ticketitem blockquote q { quotes: '» ' ' «'; }
+.ticketitem .ticketitemmeta {
+    float: right;
+    padding-left: 1em;
+    width: 20em;
+}
+
+.ticketitem blockquote q {
+    quotes: '»' '«';
+}
 .ticketitem blockquote q:before {
     content: open-quote;
     font-size: 120%;
     color: green;
+    padding: 0 0.3em;
 }
 
 .ticketitem blockquote q:after {
     content: close-quote;
     font-size: 120%;
     color: green;
+    padding: 0 0.3em;
 }
 
 #top {

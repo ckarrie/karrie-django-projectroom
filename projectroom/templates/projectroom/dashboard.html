@@ -33,8 +33,8 @@
         <h3>Neuste Änderungen</h3>
         {% for item in latest_ticketitems %}
             <div class="ticketitem">
-                <p class="ticketitemmeta">Vor {{ item.created|timesince }} von {{ item.creator }} in
-                    <a href="{{ item.ticket.job.project.get_absolute_url }}">{{ item.ticket.job.project }}</a> &raquo;
+                <p class="ticketitemmeta">Vor {{ item.created|timesince }} von {{ item.creator }} in <br />
+                    <a href="{{ item.ticket.job.project.get_absolute_url }}">{{ item.ticket.job.project }}</a> /
 
                     {% for job in item.ticket.job.get_path %}
                         <a href="{{ job.get_absolute_url }}">{{ job }}</a>
@@ -46,11 +46,13 @@
                 <p><a href="{{ item.ticket.get_absolute_url }}">Ticket #{{ item.ticket.pk }}: {{ item.ticket }}</a></p>
 
                 {% if item.tickettext_set.exists %}
-                    <blockquote>Ticketbeschreibung hinzugefügt: <q>{{ item.tickettext_set.all.0.text|truncatewords:8 }}</q></blockquote>
+                    <blockquote>Änderung:
+                        <q>{{ item.tickettext_set.all.0.text|truncatewords:8 }}</q>
+                    </blockquote>
                 {% endif %}
 
                 {% if item.ticketstatuschange_set.exists %}
-                    <blockquote>Statusänderung auf <q>{{ item.ticketstatuschange_set.all.0.get_post_status_display }}</q></blockquote>
+                    <blockquote>Status auf <q>{{ item.ticketstatuschange_set.all.0.get_post_status_display }}</q></blockquote>
                 {% endif %}
 
                 {% if item.ticketaccountentry_set.exists %}
@@ -73,7 +75,7 @@
         <h3>Meine Projekte</h3>
         <ul>
         {% for project in my_projects %}
-            <li><a href="{% url 'job_list' project__slug=project.slug %}">{{ project }}</a> ({{ project.client_company }})</li>
+            <li><a href="{% url 'job_list' project__slug=project.slug %}">{{ project }}</a> <span class="small">({{ project.client_company }})</span></li>
         {% endfor %}
         </ul>
     </div>
