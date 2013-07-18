@@ -4,7 +4,8 @@ from django.conf.urls.defaults import *
 import views
 
 urlpatterns = patterns('',
-    url(r'^$', views.ProjectListView.as_view(), name='project_list'),
+    url(r'^$', views.DashboardView.as_view(), name='dashboard'),
+    url(r'^projects$', views.ProjectListView.as_view(), name='project_list'),
     url(r'^login$', 'django.contrib.auth.views.login', {'template_name': 'projectroom/login.html'}, name="pr_login"),
     url(r'^logout$', 'django.contrib.auth.views.logout', {'template_name': 'projectroom/logout.html'}, name="pr_logout"),
     #url(r'^(?P<slug>[-\w]+)/$', views.ProjectDetailView.as_view(), name='project'),

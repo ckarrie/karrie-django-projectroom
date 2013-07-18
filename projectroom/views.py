@@ -10,6 +10,17 @@ class LoginRequiredView(LoginRequiredMixin):
     login_url = '/login'
     raise_exception = False
 
+class DashboardView(LoginRequiredView, generic.TemplateView):
+    template_name = 'projectroom/dashboard.html'
+    def get_context_data(self, **kwargs):
+        user = self.request.user
+        my_projects = models.Project.objects.filter(Q(read_acl__user=user) | Q(write_acl__user=user)).distinct()
+        kwargs.update({
+            'my_projects': my_projects,
+            'latest_ticketitems': models.TicketItem.objects.filter(ticket__hidden=False, ticket__job__project__in=my_projects).order_by('-created')[:25]
+        })
+        return super(DashboardView, self).get_context_data(**kwargs)
+
 class ProjectListView(LoginRequiredView, generic.ListView):
     model = models.Project
 

@@ -1,0 +1,66 @@
+{% extends 'projectroom/base.html' %}
+{% load mptt_tags %}
+
+{% block breadcrumbs %}
+{% endblock %}
+
+
+{% block js %}
+<style type="text/css">
+    #ticketitems {
+
+    }
+
+    #projects {
+        float: right;
+        width: 400px;
+    }
+
+</style>
+{% endblock js %}
+
+{% block content %}
+
+    <h2>Dashboard</h2>
+
+    <div id="projects">
+        <ul>
+        {% for project in my_projects %}
+            <li><a href="{% url 'job_list' project__slug=project.slug %}">{{ project }}</a></li>
+        {% endfor %}
+        </ul>
+    </div>
+
+    <div id="ticketitems">
+        <table>
+            <thead>
+            <tr>
+                <th>Projekt</th>
+                <th>Job</th>
+                <th>Ticket</th>
+                <th>Vor</th>
+                <th>Von</th>
+                <th>Änderung</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for ti in latest_ticketitems %}
+                <tr>
+                    <td>{{ ti.ticket.job.project }}</td>
+                    <td>{{ ti.ticket.job }}</td>
+                    <td>{{ ti.ticket }}</td>
+                    <td>{{ ti.created|timesince }}</td>
+                    <td>{{ ti.creator }}</td>
+                    <td>
+                        <pre>
+                        {{ ti.tickettext_set.all }}
+                        </pre>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+{% endblock %}
