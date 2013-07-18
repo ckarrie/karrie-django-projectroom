@@ -15,7 +15,11 @@
     #sidebar {
         float: right;
         width: 20em;
-        background:#c9c;
+        background:#eee;
+        padding: 1em;
+        margin: 1em;
+        border: 1px solid #aaa;
+
     }
 
 </style>
@@ -29,26 +33,33 @@
         <h3>Neuste Änderungen</h3>
         {% for item in latest_ticketitems %}
             <div class="ticketitem">
-                <p class="ticketitemmeta">{{ item.created|timesince }} von {{ item.creator }}</p>
+                <p class="ticketitemmeta">Vor {{ item.created|timesince }} von {{ item.creator }} in
+                    <a href="{{ item.ticket.job.project.get_absolute_url }}">{{ item.ticket.job.project }}</a> &raquo;
+
+                    {% for job in item.ticket.job.get_path %}
+                        <a href="{{ job.get_absolute_url }}">{{ job }}</a>
+                        {% if not forloop.last %}
+                            &raquo;
+                        {% endif %}
+                    {% endfor %}
+                </p>
                 <p><a href="{{ item.ticket.get_absolute_url }}">Ticket #{{ item.ticket.pk }}: {{ item.ticket }}</a></p>
-                <p><span class="small">In Projekt {{ item.ticket.job.project }} &raquo; Auftrag
-                {% for job in item.ticket.job.get_path %}
-                    <a href="{{ job.get_absolute_url }}">{{ job }}</a>
-                    {% if not forloop.last %}
-                        /
-                    {% endif %}
-                {% endfor %}
-                </span> </p>
+
                 {% if item.tickettext_set.exists %}
-                    <quote>Ticketbeschreibung hinzugefügt: {{ item.tickettext_set.all.0.text|truncatewords:4 }} </quote>
+                    <blockquote><p>Ticketbeschreibung hinzugefügt: {{ item.tickettext_set.all.0.text|truncatewords:4 }}</p></blockquote>
                 {% endif %}
 
                 {% if item.ticketstatuschange_set.exists %}
-                    <quote>Statusänderung auf {{ item.ticketstatuschange_set.all.0.get_post_status_display }}</quote>
+                    <blockquote><p>Statusänderung auf {{ item.ticketstatuschange_set.all.0.get_post_status_display }}</p></blockquote>
                 {% endif %}
 
                 {% if item.ticketaccountentry_set.exists %}
-                    <quote>Abbuchung von {{ item.ticketaccountentry_set.all.0.accountentry.value }} {{ item.ticketaccountentry_set.all.0.accountentry.get_currency_display }} von Konto {{ item.ticketaccountentry_set.all.0.accountentry.account }} erfolgt</quote>
+                    <blockquote>
+                        <p>
+                        Abbuchung von {{ item.ticketaccountentry_set.all.0.accountentry.value }} {{ item.ticketaccountentry_set.all.0.accountentry.get_currency_display }}
+                        von Konto {{ item.ticketaccountentry_set.all.0.accountentry.account }} erfolgt
+                        </p>
+                    </blockquote>
                 {% endif %}
             </div>
 
@@ -58,7 +69,7 @@
 
     </div>
 
-    <div id="sidebar">
+    <div id="sidebar" class="border-radius">
         <h3>Meine Projekte</h3>
         <ul>
         {% for project in my_projects %}
@@ -67,6 +78,7 @@
         </ul>
     </div>
 
+    <div style="clear: both;"></div>
 
 
 {% endblock %}
