@@ -134,7 +134,7 @@ class Job(MPTTModel):
         ticket_ids = []
         subjobs = self.get_descendants(include_self=True)
         for job in subjobs:
-            ticket_ids.extend(job.ticket_set.values_list('pk', flat=True))
+            ticket_ids.extend(job.ticket_set.active().values_list('pk', flat=True))
         return Ticket.objects.filter(pk__in=ticket_ids)
 
     @models.permalink
