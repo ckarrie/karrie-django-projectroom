@@ -30,18 +30,26 @@
         {% for item in latest_ticketitems %}
             <div class="ticketitem">
                 <p class="ticketitemmeta">{{ item.created|timesince }} von {{ item.creator }}</p>
-                <p><a href="{{ item.ticket.get_absolute_url }}">Ticket #{{ item.ticket.pk }}: {{ item.ticket }}</a> <span class="small">Projekt {{ item.ticket.job.project }} &raquo; Auftrag {{ item.ticket.job.get_path|join:'&raquo;' }}</span> </p>
+                <p><a href="{{ item.ticket.get_absolute_url }}">Ticket #{{ item.ticket.pk }}: {{ item.ticket }}</a></p>
+                <p><span class="small">In Projekt {{ item.ticket.job.project }} &raquo; Auftrag
+                {% for job in item.ticket.job.get_path %}
+                    <a href="{{ job.get_absolute_url }}">{{ job }}</a>
+                    {% if not forloop.last %}
+                        /
+                    {% endif %}
+                {% endfor %}
+                </span> </p>
                 {% if item.tickettext_set.exists %}
-                    <p>Ticketbeschreibung hinzugefügt: {{ item.tickettext_set.0.text|truncatewords:4 }} </p>
+                    <quote>Ticketbeschreibung hinzugefügt: {{ item.tickettext_set.all.0.text|truncatewords:4 }} </quote>
                 {% endif %}
 
-                {% for sc in item.ticketstatuschange_set.all %}
-                    <pre class="statuschange">Der Status wurde von {{ sc.get_pre_status_display }} auf {{ sc.get_post_status_display }} geändert.</pre>
-                {% endfor %}
+                {% if item.ticketstatuschange_set.exists %}
+                    <quote>Statusänderung auf {{ item.ticketstatuschange_set.all.0.get_post_status_display }}</quote>
+                {% endif %}
 
-                {% for tae in item.ticketaccountentry_set.all %}
-                    <pre class="accountentry">Abbuchung von {{ tae.accountentry.value }} {{ tae.accountentry.account.get_currency_display }} von Konto {{ tae.accountentry.account }}</pre>
-                {% endfor %}
+                {% if item.ticketaccountentry_set.exists %}
+                    <quote>Abbuchung von {{ item.ticketaccountentry_set.all.0.accountentry.value }} {{ item.ticketaccountentry_set.all.0.accountentry.get_currency_display }} von Konto {{ item.ticketaccountentry_set.all.0.accountentry.account }} erfolgt</quote>
+                {% endif %}
             </div>
 
         {% empty %}
