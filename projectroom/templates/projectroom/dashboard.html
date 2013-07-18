@@ -8,12 +8,14 @@
 {% block js %}
 <style type="text/css">
     #ticketitems {
-
+        float: left;
+        width: 50em;
     }
 
-    #projects {
+    #sidebar {
         float: right;
-        width: 400px;
+        width: 20em;
+        background:#c9c;
     }
 
 </style>
@@ -23,44 +25,40 @@
 
     <h2>Dashboard</h2>
 
-    <div id="projects">
+    <div id="ticketitems">
+        <h3>Neuste Änderungen</h3>
+        {% for item in latest_ticketitems %}
+            <div class="ticketitem">
+                <p class="ticketitemmeta">{{ item.created|timesince }} von {{ item.creator }}</p>
+                <p><a href="{{ item.ticket.get_absolute_url }}">Ticket #{{ item.ticket.pk }}: {{ item.ticket }}</a> <span class="small">Projekt {{ item.ticket.job.project }} &raquo; Auftrag {{ item.ticket.job.get_path|join:'&raquo;' }}</span> </p>
+                {% if item.tickettext_set.exists %}
+                    <p>Ticketbeschreibung hinzugefügt: {{ item.tickettext_set.0.text|truncatewords:4 }} </p>
+                {% endif %}
+
+                {% for sc in item.ticketstatuschange_set.all %}
+                    <pre class="statuschange">Der Status wurde von {{ sc.get_pre_status_display }} auf {{ sc.get_post_status_display }} geändert.</pre>
+                {% endfor %}
+
+                {% for tae in item.ticketaccountentry_set.all %}
+                    <pre class="accountentry">Abbuchung von {{ tae.accountentry.value }} {{ tae.accountentry.account.get_currency_display }} von Konto {{ tae.accountentry.account }}</pre>
+                {% endfor %}
+            </div>
+
+        {% empty %}
+            <p>Es existiert keine Ticketbeschreibung</p>
+        {% endfor %}
+
+    </div>
+
+    <div id="sidebar">
+        <h3>Meine Projekte</h3>
         <ul>
         {% for project in my_projects %}
-            <li><a href="{% url 'job_list' project__slug=project.slug %}">{{ project }}</a></li>
+            <li><a href="{% url 'job_list' project__slug=project.slug %}">{{ project }}</a> ({{ project.client_company }})</li>
         {% endfor %}
         </ul>
     </div>
 
-    <div id="ticketitems">
-        <table>
-            <thead>
-            <tr>
-                <th>Projekt</th>
-                <th>Job</th>
-                <th>Ticket</th>
-                <th>Vor</th>
-                <th>Von</th>
-                <th>Änderung</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for ti in latest_ticketitems %}
-                <tr>
-                    <td>{{ ti.ticket.job.project }}</td>
-                    <td>{{ ti.ticket.job }}</td>
-                    <td>{{ ti.ticket }}</td>
-                    <td>{{ ti.created|timesince }}</td>
-                    <td>{{ ti.creator }}</td>
-                    <td>
-                        <pre>
-                        {{ ti.tickettext_set.all }}
-                        </pre>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
 
-    </div>
 
 {% endblock %}
