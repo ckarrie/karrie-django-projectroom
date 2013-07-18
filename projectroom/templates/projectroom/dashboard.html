@@ -78,7 +78,7 @@
             <li><a href="{% url 'job_list' project__slug=project.slug %}">{{ project }}</a> <span class="small">({{ project.client_company }})</span></li>
         {% endfor %}
         </ul>
-        <p><a href="{% url 'project_list '%}" class="btn">Übersicht</a></p>
+        <p><a href="{% url 'project_list' %}" class="btn">Übersicht</a></p>
     </div>
 
     <div style="clear: both;"></div>
