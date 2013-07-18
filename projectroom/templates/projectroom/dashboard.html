@@ -46,11 +46,11 @@
                 <p><a href="{{ item.ticket.get_absolute_url }}">Ticket #{{ item.ticket.pk }}: {{ item.ticket }}</a></p>
 
                 {% if item.tickettext_set.exists %}
-                    <blockquote><p>Ticketbeschreibung hinzugefügt: {{ item.tickettext_set.all.0.text|truncatewords:4 }}</p></blockquote>
+                    <blockquote>Ticketbeschreibung hinzugefügt: <q>{{ item.tickettext_set.all.0.text|truncatewords:8 }}</q></blockquote>
                 {% endif %}
 
                 {% if item.ticketstatuschange_set.exists %}
-                    <blockquote><p>Statusänderung auf {{ item.ticketstatuschange_set.all.0.get_post_status_display }}</p></blockquote>
+                    <blockquote>Statusänderung auf <q>{{ item.ticketstatuschange_set.all.0.get_post_status_display }}</q></blockquote>
                 {% endif %}
 
                 {% if item.ticketaccountentry_set.exists %}
