@@ -2,7 +2,7 @@
 {% load mptt_tags %}
 
 {% block breadcrumbs %}
-    <li><a href="{% url 'project_list' %}">{{ object.project }}</a></li>
+    <li><a href="{{ object.get_absolute_url }}">{{ object }}</a></li>
     {% for parent in object.get_ancestors %}
         <li>
             <a href="{{ parent.get_absolute_url }}">{{ parent.name }}</a>
