@@ -14,7 +14,11 @@ setup(
     license='BSD License',  # example license
     description='A django app to manage projectrooms',
     long_description=README,
-    install_requires = ['django>=1.5'],
+    install_requires=[
+        'django>=1.11.9',
+        'django-mptt-nomagic',
+        'django-braces>=1.13.0'
+    ],
     url='https://bitbucket.org/ckarrie/karrie-django-projectroom/',
     author='Christian Karrie',
     author_email='ckarrie@gmail.com',

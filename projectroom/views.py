@@ -1,17 +1,22 @@
-from django.http import Http404
-from django.views import generic
-from django.db.models import Q
-
 from braces.views import LoginRequiredMixin
+from django.db.models import Q
+from django.utils import timezone
+from django.http import Http404, HttpResponseRedirect
+from django.urls import reverse
+from django.views import generic
 
-import models, forms
+import forms
+import models
+
 
 class LoginRequiredView(LoginRequiredMixin):
     login_url = '/login'
     raise_exception = False
 
+
 class DashboardView(LoginRequiredView, generic.TemplateView):
     template_name = 'projectroom/dashboard.html'
+
     def get_context_data(self, **kwargs):
         user = self.request.user
         my_projects = models.Project.objects.filter(Q(read_acl__user=user) | Q(write_acl__user=user)).distinct()
@@ -20,6 +25,7 @@ class DashboardView(LoginRequiredView, generic.TemplateView):
             'latest_ticketitems': models.TicketItem.objects.filter(ticket__hidden=False, ticket__job__project__in=my_projects).order_by('-created')[:25]
         })
         return super(DashboardView, self).get_context_data(**kwargs)
+
 
 class ProjectListView(LoginRequiredView, generic.ListView):
     model = models.Project
@@ -31,6 +37,7 @@ class ProjectListView(LoginRequiredView, generic.ListView):
 
         return qs
 
+
 class JobListView(LoginRequiredView, generic.ListView):
     model = models.Job
 
@@ -39,13 +46,69 @@ class JobListView(LoginRequiredView, generic.ListView):
         qs = super(JobListView, self).get_queryset()
         qs = qs.filter(
             Q(project__read_acl__user=user) | Q(project__write_acl__user=user),
-            project__slug = self.kwargs.get('project__slug')
+            project__slug=self.kwargs.get('project__slug')
         ).distinct()
 
         return qs
 
+    def get_context_data(self, **kwargs):
+        ctx = super(JobListView, self).get_context_data(**kwargs)
+        ctx.update({
+            'project': models.Project.objects.get(slug=self.kwargs.get('project__slug'))
+        })
+        return ctx
+
+
+class JobCreateView(LoginRequiredView, generic.CreateView):
+    model = models.Job
+    form_class = forms.CreateJobForm
+
+    def get_initial(self):
+        init = super(JobCreateView, self).get_initial()
+        init.update({
+            'deadline': timezone.now(),
+            'rate': models.Rate.objects.first(),
+            'account': self.get_possible_accounts().first()
+        })
+        return init
+
+    def get_possible_accounts(self):
+        project = models.Project.objects.get(slug=self.kwargs.get('project__slug'))
+        return models.Account.objects.filter(project=project)
+
+    def get_form_kwargs(self):
+        kwargs = super(JobCreateView, self).get_form_kwargs()
+        project = models.Project.objects.get(slug=self.kwargs.get('project__slug'))
+        kwargs.update({
+            'possible_accounts': self.get_possible_accounts()
+        })
+        return kwargs
+
+    def form_valid(self, form):
+        obj = form.save(commit=False)
+        project = models.Project.objects.get(slug=self.kwargs.get('project__slug'))
+        obj.request_by = models.Person.objects.get(company=project.client_company, user=self.request.user)
+        obj.project = project
+        obj.save()
+        return HttpResponseRedirect(reverse('job', kwargs={'project__slug': project.slug, 'pk': obj.pk}))
+
+
 class JobDetailView(LoginRequiredView, generic.DetailView):
     model = models.Job
+
+    def get_context_data(self, **kwargs):
+        ctx = super(JobDetailView, self).get_context_data(**kwargs)
+        tickets = self.object.get_all_tickets().filter(
+            Q(assigned_to__user=self.request.user, hidden=True)
+            |
+            Q(job__project__write_acl__user=self.request.user)
+        )
+        ctx.update({
+            'tickets': tickets,
+
+        })
+        return ctx
+
 
 class JobUpdateView(LoginRequiredView, generic.UpdateView):
     form_class = forms.JobForm
@@ -72,6 +135,7 @@ class TicketDetailView(LoginRequiredView, generic.DetailView):
         })
         return super(TicketDetailView, self).get_context_data(**kwargs)
 
+
 class TicketCreateView(LoginRequiredView, generic.CreateView):
     model = models.Ticket
     form_class = forms.TicketForm
@@ -83,7 +147,6 @@ class TicketCreateView(LoginRequiredView, generic.CreateView):
             'request_by': models.Person.objects.get(user=self.request.user),
             'status': 1
         }
-
 
 
 class TicketItemCreateView(LoginRequiredView, generic.CreateView):
@@ -106,4 +169,3 @@ class TicketItemCreateView(LoginRequiredView, generic.CreateView):
 
     def form_valid(self, form):
         return super(TicketItemCreateView, self).form_valid(form)
-

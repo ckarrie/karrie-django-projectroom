@@ -1,7 +1,9 @@
 __author__ = 'christian'
 
 from django import forms
+
 import models
+
 
 class TicketItemForm(forms.ModelForm):
     status = forms.ChoiceField(choices=models.JOB_STATUS_CHOICES)
@@ -31,11 +33,10 @@ class TicketItemForm(forms.ModelForm):
 
         return ti_instance
 
-
-
     class Meta:
         fields = ('ticket', 'creator',)
         model = models.TicketItem
+
 
 class TicketForm(forms.ModelForm):
     text = forms.CharField(widget=forms.Textarea)
@@ -48,7 +49,6 @@ class TicketForm(forms.ModelForm):
         self.fields['job'].widget = forms.HiddenInput()
         self.fields['request_by'].widget = forms.HiddenInput()
         self.fields['status'].widget = forms.HiddenInput()
-
 
         if not instance:
             self.fields['assigned_to'].widget = forms.HiddenInput()
@@ -74,10 +74,24 @@ class TicketForm(forms.ModelForm):
 
         return ticket_instance
 
+    class Meta:
+        fields = '__all__'
+        model = models.Ticket
+
+
+class CreateJobForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        possible_accounts = kwargs.pop('possible_accounts', None)
+        super(CreateJobForm, self).__init__(*args, **kwargs)
+        self.fields['account'].queryset = possible_accounts
+
 
     class Meta:
-        model = models.Ticket
+        fields = ('job_type', 'parent', 'name', 'description', 'deadline', 'rate', 'account')
+        model = models.Job
+
 
 class JobForm(forms.ModelForm):
     class Meta:
+        fields = '__all__'
         model = models.Job

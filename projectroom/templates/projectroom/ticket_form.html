@@ -2,12 +2,20 @@
 {% load mptt_tags %}
 
 {% block breadcrumbs %}
-
+    {% if object %}
+        <li><a href="{% url 'job_list' project__slug=object.job.project.slug %}">Aufträge {{ object.job.project }}</a></li>
+        <li><a href="{{ object.job.get_absolute_url }}">{{ object.job }}</a></li>
+        <li><a href="">Ticket #{{ object.pk }} bearbeiten</a></li>
+    {% else %}
+        <li><a href="{% url 'job_list' project__slug=form.initial.job.project.slug %}">Aufträge {{ form.initial.job.project }}</a></li>
+        <li><a href="{{ form.initial.job.get_absolute_url }}">{{ form.initial.job }}</a></li>
+        <li><a href="">Neues Ticket erstellen</a></li>
+    {% endif %}
 {% endblock %}
 
 {% block content %}
 
-    {% if form.instance %}
+    {% if object %}
         <h2>Ticket bearbeiten</h2>
     {% else %}
         <h2>Ticket erstellen</h2>

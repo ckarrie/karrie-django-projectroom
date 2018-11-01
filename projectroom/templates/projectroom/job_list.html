@@ -1,20 +1,26 @@
 {% extends 'projectroom/base.html' %}
 
 {% block breadcrumbs %}
-    <li><a href="">Auftragsliste</a></li>
+    <li><a href="">Auftragsliste {{ project }}</a></li>
 {% endblock %}
 
 {% block content %}
 
-    <h2>Auftragsliste</h2>
+    <h2>Auftragsliste {{ project }} <span class="small">{{ project.client_company }}</span></h2>
+
+    <p><a class="btn" href="{% url 'job_add' project__slug=project.slug %}">Auftrag anfragen</a> </p>
 
     <table>
         <thead>
         <tr>
             <th>#</th>
-            <th>Firma</th>
-            <th>Projekt</th>
+
             <th>Auftrag</th>
+            <th>Typ</th>
+            <th>vom</th>
+            <th>Frist</th>
+            <th>Anfrage von</th>
+            <th>offene Tickets</th>
         </tr>
         </thead>
         <tbody>
@@ -23,9 +29,34 @@
 
             <tr>
                 <td>#{{ job.pk }}</td>
-                <td>{{ job.project.client_company }}</td>
-                <td>{{ job.project.name }}</td>
-                <td><a style="padding-left: {{ job.level }}em;" href="{{ job.get_absolute_url }}">{{ job }}</a></td>
+                <td>
+                    <a style="padding-left: {{ job.level }}em;" href="{{ job.get_absolute_url }}" title="{{ job.description }}"><strong>{{ job }}</strong></a>
+                    <p class="small">
+
+                    </p>
+                </td>
+                <td>{{ job.job_type }}</td>
+                <td>{{ job.request_at }}</td>
+                <td>
+                    <p class="{% if job.is_old_deadline %}red-text{% endif %}">{{ job.deadline }}</p>
+                </td>
+                <td>
+                    {{ job.request_by }}
+                </td>
+                <td>
+                    {% for t in job.get_all_active_tickets %}
+                        <a href="{{ t.get_absolute_url }}">{{ t.name }}</a>
+                    {% empty %}
+                        {% if user in project.get_write_users %}
+                            <a class="btn" href="{% url 'ticket_add' project__slug=project.slug pk=job.pk %}">Ticket erstellen</a>
+                        {% endif %}
+                    {% endfor %}
+                </td>
+            </tr>
+
+        {% empty %}
+            <tr>
+                <td colspan="5">Noch keine Aufträge angelegt</td>
             </tr>
 
         {% endfor %}

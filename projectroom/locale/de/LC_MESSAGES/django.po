@@ -3,21 +3,22 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # Christian Karrie <ckarrie@gmail.com>, 2013.
+# Christian Karrié <christian@karrie.info>, 2018.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-17 20:49+0200\n"
-"PO-Revision-Date: 2013-07-17 20:47+0200\n"
-"Last-Translator: Christian Karrie <ckarrie@gmail.com>\n"
+"POT-Creation-Date: 2018-11-01 16:14+0100\n"
+"PO-Revision-Date: 2018-11-01 16:15+0100\n"
+"Last-Translator: Christian Karrié <christian@karrie.info>\n"
 "Language-Team: Deutsch <>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Gtranslator 2.91.6\n"
+"X-Generator: Gtranslator 2.91.7\n"
 
 #: models.py:15
 msgid "Requested by Customer"
@@ -63,21 +64,77 @@ msgstr "€"
 msgid "Swiss Francs"
 msgstr "CHF"
 
-#: models.py:82 models.py:103
+#: models.py:86 models.py:108
 msgid "Currency"
 msgstr "Währung"
 
-#: models.py:107
+#: models.py:112
 #, python-format
 msgid "%(hr)s %(c)s/h"
 msgstr "%(hr)s %(c)s/Std."
 
-#: models.py:195
+#: models.py:125
+msgid "Job type"
+msgstr "Auftragstyp"
+
+#: models.py:126
+msgid "Parent Job"
+msgstr "Übergeordneter Auftrag"
+
+#: models.py:127
+msgid "Job name"
+msgstr "Auftragstitel"
+
+#: models.py:128
+msgid "Description"
+msgstr "Beschreibung"
+
+#: models.py:129
+msgid "Deadline"
+msgstr "Frist"
+
+#: models.py:130
+msgid "Rate"
+msgstr "Tarif"
+
+#: models.py:131 models.py:178
+msgid "Requested by"
+msgstr "Anfrage von"
+
+#: models.py:132
+msgid "Requested at"
+msgstr "Anfrage vom"
+
+#: models.py:133
+msgid "Account"
+msgstr "Konto"
+
+#: models.py:176
+msgid "Ticket name"
+msgstr "Ticketname"
+
+#: models.py:179
+msgid "Ticket status"
+msgstr "Status"
+
+#: models.py:180
+msgid "Assigned to"
+msgstr "Zuwiesen an"
+
+#: models.py:181
+msgid "valued effort"
+msgstr "geschätzter Aufwand"
+
+#: models.py:182
+msgid "actual effort"
+msgstr "tatsächlicher Aufwand"
+
+#: models.py:221
 #, python-format
 msgid "%(ticket_name)s: %(creator)s %(created)s"
 msgstr "%(ticket_name)s: %(creator)s %(created)s"
 
-#: models.py:212
+#: models.py:240
 #, python-format
 msgid "%(ticket_name)s: %(pre)s > %(post)s"
 msgstr "%(ticket_name)s: %(pre)s > %(post)s"

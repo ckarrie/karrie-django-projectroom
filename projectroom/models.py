@@ -1,6 +1,7 @@
 # django imports
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 from django.utils.translation import ugettext as _
 
 # django-apps
@@ -9,7 +10,6 @@ from mptt.models import TreeForeignKey, MPTTModel, TreeManager
 
 # python imports
 import datetime
-
 
 JOB_STATUS_CHOICES = (
     (1, _('Requested by Customer')),
@@ -41,6 +41,7 @@ class JobType(models.Model):
     def __unicode__(self):
         return self.name
 
+
 class Company(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField()
@@ -48,17 +49,19 @@ class Company(models.Model):
     def __unicode__(self):
         return self.name
 
+
 class Person(models.Model):
     user = models.ForeignKey(User)
     company = models.ForeignKey(Company)
 
     def __unicode__(self):
-        return self.user.get_full_name()
+        return self.user.get_full_name() or self.user.get_username()
+
 
 class Project(models.Model):
     client_company = models.ForeignKey(Company)
-    read_acl = models.ManyToManyField(Person, null=True, blank=True, related_name='project_readacl')
-    write_acl = models.ManyToManyField(Person, null=True, blank=True, related_name='project_writeacl')
+    read_acl = models.ManyToManyField(Person, blank=True, related_name='project_readacl')
+    write_acl = models.ManyToManyField(Person, blank=True, related_name='project_writeacl')
     name = models.CharField(max_length=255)
     slug = models.SlugField()
     active = models.BooleanField(default=True)
@@ -75,6 +78,7 @@ class Project(models.Model):
     class Meta:
         ordering = ('client_company__name',)
 
+
 class Account(models.Model):
     project = models.ForeignKey(Project)
     name = models.CharField(max_length=255)
@@ -85,9 +89,10 @@ class Account(models.Model):
         return self.name
 
     def calculate_balance(self):
-        ai = self.accountentry_set.all().aggregate(values_sum = models.Sum('value'))
+        ai = self.accountentry_set.all().aggregate(values_sum=models.Sum('value'))
         values_sum = ai.get('values_sum')
         return values_sum
+
 
 class AccountEntry(models.Model):
     account = models.ForeignKey(Account)
@@ -109,6 +114,7 @@ class Rate(models.Model):
             'c': self.get_currency_display()
         }
 
+
 class JobManager(TreeManager):
     def open(self):
         return self.filter(ticket__status__lt=JOB_STATUS_LEN)
@@ -116,14 +122,15 @@ class JobManager(TreeManager):
 
 class Job(MPTTModel):
     project = models.ForeignKey(Project)
-    job_type = models.ForeignKey(JobType)
-    parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
-    name = models.CharField(max_length=255)
-    description = models.TextField()
-    deadline = models.DateTimeField()
-    rate = models.ForeignKey(Rate)
-    request_by = models.ForeignKey(Person)
-    account = models.ForeignKey(Account)
+    job_type = models.ForeignKey(JobType, verbose_name=_('Job type'))
+    parent = TreeForeignKey('self', null=True, blank=True, related_name='children', verbose_name=_('Parent Job'))
+    name = models.CharField(max_length=255, verbose_name=_('Job name'))
+    description = models.TextField(verbose_name=_('Description'))
+    deadline = models.DateTimeField(verbose_name=_('Deadline'))
+    rate = models.ForeignKey(Rate, verbose_name=_('Rate'))
+    request_by = models.ForeignKey(Person, verbose_name=_('Requested by'))
+    request_at = models.DateTimeField(verbose_name=_('Requested at'), auto_now_add=True)
+    account = models.ForeignKey(Account, verbose_name=_('Account'))
 
     objects = JobManager()
 
@@ -134,8 +141,18 @@ class Job(MPTTModel):
         ticket_ids = []
         subjobs = self.get_descendants(include_self=True)
         for job in subjobs:
+            ticket_ids.extend(job.ticket_set.all().values_list('pk', flat=True))
+        return Ticket.objects.filter(pk__in=ticket_ids)
+
+    def get_all_active_tickets(self):
+        ticket_ids = []
+        subjobs = self.get_descendants(include_self=True)
+        for job in subjobs:
             ticket_ids.extend(job.ticket_set.active().values_list('pk', flat=True))
         return Ticket.objects.filter(pk__in=ticket_ids)
+
+    def is_old_deadline(self):
+        return self.deadline < timezone.now()
 
     @models.permalink
     def get_absolute_url(self):
@@ -148,19 +165,21 @@ class Job(MPTTModel):
     def __unicode__(self):
         return self.name
 
+
 class TicketManager(models.Manager):
     def active(self):
-        return self.filter(status__lt = JOB_STATUS_LEN, hidden=False)
+        return self.filter(status__lt=JOB_STATUS_LEN, hidden=False)
+
 
 class Ticket(models.Model):
     job = models.ForeignKey(Job)
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, verbose_name=_('Ticket name'))
 
-    request_by = models.ForeignKey(Person, related_name='requested_tickets')
-    status = models.IntegerField(choices=JOB_STATUS_CHOICES)
-    assigned_to = models.ForeignKey(Person, related_name='assigned_tickets', null=True, blank=True)
-    duration_pre = models.IntegerField(null=True, blank=True)
-    duration_post = models.IntegerField(null=True, blank=True)
+    request_by = models.ForeignKey(Person, related_name='requested_tickets', verbose_name=_('Requested by'))
+    status = models.IntegerField(choices=JOB_STATUS_CHOICES, verbose_name=_('Ticket status'))
+    assigned_to = models.ForeignKey(Person, related_name='assigned_tickets', null=True, blank=True, verbose_name=_('Assigned to'))
+    duration_pre = models.IntegerField(null=True, blank=True, verbose_name=_('valued effort'))
+    duration_post = models.IntegerField(null=True, blank=True, verbose_name=_('actual effort'))
 
     hidden = models.BooleanField(default=False)
 
@@ -192,6 +211,7 @@ class Ticket(models.Model):
     def get_absolute_url(self):
         return ('ticket', [], {'pk': self.pk, 'project__slug': self.job.project.slug, 'job__pk': self.job.pk})
 
+
 class TicketItem(models.Model):
     ticket = models.ForeignKey(Ticket)
     creator = models.ForeignKey(Person)
@@ -200,9 +220,11 @@ class TicketItem(models.Model):
     def __unicode__(self):
         return _("%(ticket_name)s: %(creator)s %(created)s") % {'ticket_name': self.ticket.name, 'creator': self.creator, 'created': self.created}
 
+
 class TicketText(models.Model):
     item = models.ForeignKey(TicketItem)
     text = models.TextField()
+
 
 class TicketStatusChange(models.Model):
     item = models.ForeignKey(TicketItem)
@@ -216,6 +238,7 @@ class TicketStatusChange(models.Model):
 
     def __unicode__(self):
         return _("%(ticket_name)s: %(pre)s > %(post)s") % {'ticket_name': self.item.ticket.name, 'pre': self.pre_status, 'post': self.post_status}
+
 
 class TicketAccountEntry(models.Model):
     item = models.ForeignKey(TicketItem)

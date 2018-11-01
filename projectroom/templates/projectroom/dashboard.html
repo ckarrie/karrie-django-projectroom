@@ -34,7 +34,7 @@
         {% for item in latest_ticketitems %}
             <div class="ticketitem">
                 <p class="ticketitemmeta">Vor {{ item.created|timesince }} von {{ item.creator }} in <br />
-                    <a href="{{ item.ticket.job.project.get_absolute_url }}">{{ item.ticket.job.project }}</a> /
+                    <a href="{% url 'job_list' project__slug=item.ticket.job.project.slug %}">{{ item.ticket.job.project }}</a> /
 
                     {% for job in item.ticket.job.get_path %}
                         <a href="{{ job.get_absolute_url }}">{{ job }}</a>
@@ -47,19 +47,19 @@
 
                 {% if item.tickettext_set.exists %}
                     <blockquote>Änderung:
-                        <q>{{ item.tickettext_set.all.0.text|truncatewords:8 }}</q>
+                        <q>{{ item.tickettext_set.first.text|truncatewords:8 }}</q>
                     </blockquote>
                 {% endif %}
 
                 {% if item.ticketstatuschange_set.exists %}
-                    <blockquote>Status auf <q>{{ item.ticketstatuschange_set.all.0.get_post_status_display }}</q></blockquote>
+                    <blockquote>Status auf <q>{{ item.ticketstatuschange_set.first.get_post_status_display }}</q></blockquote>
                 {% endif %}
 
                 {% if item.ticketaccountentry_set.exists %}
                     <blockquote>
                         <p>
-                        Abbuchung von {{ item.ticketaccountentry_set.all.0.accountentry.value }} {{ item.ticketaccountentry_set.all.0.accountentry.get_currency_display }}
-                        von Konto {{ item.ticketaccountentry_set.all.0.accountentry.account }} erfolgt
+                        Abbuchung von {{ item.ticketaccountentry_set.first.accountentry.value }} {{ item.ticketaccountentry_set.first.accountentry.get_currency_display }}
+                        von Konto {{ item.ticketaccountentry_set.first.accountentry.account }} erfolgt
                         </p>
                     </blockquote>
                 {% endif %}
@@ -78,6 +78,7 @@
             <li><a href="{% url 'job_list' project__slug=project.slug %}">{{ project }}</a> <span class="small">({{ project.client_company }})</span></li>
         {% endfor %}
         </ul>
+        <p>&nbsp;</p>
         <p><a href="{% url 'project_list' %}" class="btn">Übersicht</a></p>
     </div>
 

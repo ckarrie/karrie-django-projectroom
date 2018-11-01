@@ -293,6 +293,15 @@ ul.tickets li {
     list-style: none;
 }
 
+tr.ticket-close td {
+    text-decoration: line-through;
+}
+
+.red-text {
+    color: white;
+    background-color: red;
+}
+
 .small {
     font-size: 70%;
 }
