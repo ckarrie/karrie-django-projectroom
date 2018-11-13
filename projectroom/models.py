@@ -36,7 +36,6 @@ class JobType(models.Model):
     i.e.: programming
     """
     name = models.CharField(max_length=255)
-    slug = models.SlugField()
 
     def __unicode__(self):
         return self.name
@@ -44,14 +43,13 @@ class JobType(models.Model):
 
 class Company(models.Model):
     name = models.CharField(max_length=255)
-    slug = models.SlugField()
 
     def __unicode__(self):
         return self.name
 
 
 class Person(models.Model):
-    user = models.ForeignKey(User)
+    user = models.OneToOneField(User)
     company = models.ForeignKey(Company)
 
     def __unicode__(self):
@@ -82,7 +80,7 @@ class Project(models.Model):
 class Account(models.Model):
     project = models.ForeignKey(Project)
     name = models.CharField(max_length=255)
-    balance = models.DecimalField("Kontostand", decimal_places=2, max_digits=8, blank=True)
+    balance = models.DecimalField("Kontostand", decimal_places=2, max_digits=8, blank=True, null=True)
     currency = models.CharField(_('Currency'), max_length=3, choices=CURRENCY_CHOICES)
 
     def __unicode__(self):
@@ -174,7 +172,6 @@ class TicketManager(models.Manager):
 class Ticket(models.Model):
     job = models.ForeignKey(Job)
     name = models.CharField(max_length=255, verbose_name=_('Ticket name'))
-
     request_by = models.ForeignKey(Person, related_name='requested_tickets', verbose_name=_('Requested by'))
     status = models.IntegerField(choices=JOB_STATUS_CHOICES, verbose_name=_('Ticket status'))
     assigned_to = models.ForeignKey(Person, related_name='assigned_tickets', null=True, blank=True, verbose_name=_('Assigned to'))

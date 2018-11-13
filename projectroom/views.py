@@ -87,7 +87,7 @@ class JobCreateView(LoginRequiredView, generic.CreateView):
     def form_valid(self, form):
         obj = form.save(commit=False)
         project = models.Project.objects.get(slug=self.kwargs.get('project__slug'))
-        obj.request_by = models.Person.objects.get(company=project.client_company, user=self.request.user)
+        obj.request_by = models.Person.objects.get(user=self.request.user)
         obj.project = project
         obj.save()
         return HttpResponseRedirect(reverse('job', kwargs={'project__slug': project.slug, 'pk': obj.pk}))
