@@ -1,8 +1,9 @@
-from django.contrib.gis import admin
+from django.contrib import admin
 from django.utils.translation import ugettext as _
 import models
 
 __author__ = 'christian'
+
 
 def force_save(modeladmin, request, queryset):
     for obj in queryset:
