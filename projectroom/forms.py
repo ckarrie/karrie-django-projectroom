@@ -49,15 +49,16 @@ class TicketForm(forms.ModelForm):
         self.fields['job'].widget = forms.HiddenInput()
         self.fields['request_by'].widget = forms.HiddenInput()
         self.fields['status'].widget = forms.HiddenInput()
+        self.fields['hidden'].widget = forms.HiddenInput()
 
         if not instance:
-            self.fields['assigned_to'].widget = forms.HiddenInput()
+
             self.fields['duration_post'].widget = forms.HiddenInput()
 
     def clean(self):
         cd = self.cleaned_data
         request_by = cd.get('request_by')
-        cd.update({'assigned_to': request_by})
+        #cd.update({'assigned_to': request_by})
         return cd
 
     def save(self, **kwargs):

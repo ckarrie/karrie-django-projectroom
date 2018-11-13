@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-01 16:14+0100\n"
-"PO-Revision-Date: 2018-11-01 16:15+0100\n"
+"POT-Creation-Date: 2018-11-13 14:57+0100\n"
+"PO-Revision-Date: 2018-11-13 14:57+0100\n"
 "Last-Translator: Christian Karrié <christian@karrie.info>\n"
 "Language-Team: Deutsch <>\n"
 "Language: \n"
@@ -119,7 +119,7 @@ msgstr "Status"
 
 #: models.py:180
 msgid "Assigned to"
-msgstr "Zuwiesen an"
+msgstr "Zuweisen an"
 
 #: models.py:181
 msgid "valued effort"

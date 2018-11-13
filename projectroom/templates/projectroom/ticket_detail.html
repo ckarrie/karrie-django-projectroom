@@ -1,14 +1,14 @@
 {% extends 'projectroom/base.html' %}
 
 {% block breadcrumbs %}
-    <li><a href="{{ object.job.project.get_absolute_url }}">{{ object.job.project }}</a></li>
-{% for parent in object.job.get_ancestors %}
-<li>
-    <a href="{{ parent.get_absolute_url }}">{{ parent.name }}</a>
-</li>
-{% endfor %}
-<li><a href="{{ object.job.get_absolute_url }}">{{ object.job }}</a></li>
-<li><a href="">{{ object }}</a></li>
+    <li><a href="{% url 'job_list' project__slug=object.job.project.slug %}">{{ object.job.project }}</a></li>
+    {% for parent in object.job.get_ancestors %}
+    <li>
+        <a href="{{ parent.get_absolute_url }}">{{ parent.name }}</a>
+    </li>
+    {% endfor %}
+    <li><a href="{{ object.job.get_absolute_url }}">{{ object.job }}</a></li>
+    <li><a href="">{{ object }}</a></li>
 {% endblock %}
 
 {% block content %}
