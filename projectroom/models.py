@@ -151,11 +151,24 @@ class Job(MPTTModel):
             ticket_ids.extend(job.ticket_set.active().values_list('pk', flat=True))
         return Ticket.objects.filter(pk__in=ticket_ids)
 
+    def get_all_closed_tickets(self):
+        ticket_ids = []
+        subjobs = self.get_descendants(include_self=True)
+        for job in subjobs:
+            ticket_ids.extend(job.ticket_set.closed().values_list('pk', flat=True))
+        return Ticket.objects.filter(pk__in=ticket_ids)
+
     def is_old_deadline(self):
         return self.deadline < timezone.now()
 
     def get_aggregated_duration_pre(self):
         return self.get_all_tickets().aggregate(sum_duration_pre=models.Sum('duration_pre')).get('sum_duration_pre') or 0
+
+    def all_tickets_closed(self):
+        all_tickets = self.get_all_tickets().count()
+        if all_tickets > 0:
+            return all_tickets == self.get_all_closed_tickets().count()
+        return False
 
     @models.permalink
     def get_absolute_url(self):
@@ -190,6 +203,9 @@ class JobFile(models.Model):
 class TicketManager(models.Manager):
     def active(self):
         return self.filter(status__lt=JOB_STATUS_LEN, hidden=False)
+
+    def closed(self):
+        return self.filter(status=JOB_STATUS_LEN, hidden=False)
 
 
 class Ticket(models.Model):

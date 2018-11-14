@@ -72,7 +72,7 @@
     {% for text in item.tickettext_set.all %}
         <pre>{{ text.text }}</pre>
     {% endfor %}
-    
+
     {% for sc in item.ticketstatuschange_set.all %}
         <pre class="statuschange small">Der Status wurde von <i>{{ sc.get_pre_status_display }}</i> auf <strong>{{ sc.get_post_status_display }}</strong> geändert.</pre>
     {% endfor %}

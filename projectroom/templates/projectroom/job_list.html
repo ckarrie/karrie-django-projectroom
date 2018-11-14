@@ -26,33 +26,36 @@
         <tbody>
 
         {% for job in object_list %}
+            {% with all_tickets_closed=job.all_tickets_closed %}
 
-            <tr>
-                <td>#{{ job.pk }}</td>
-                <td>
-                    <a style="padding-left: {{ job.level }}em;" href="{{ job.get_absolute_url }}" title="{{ job.description }}"><strong>{{ job }}</strong></a>
-                    <p class="small">
+                <tr class="{% if all_tickets_closed %}ticket-close{% endif %}">
+                    <td>#{{ job.pk }}</td>
+                    <td>
+                        <a style="padding-left: {{ job.level }}em;" href="{{ job.get_absolute_url }}" title="{{ job.description }}"><strong>{{ job }}</strong></a>
+                        
+                    </td>
+                    <td>{{ job.job_type }}</td>
+                    <td>{{ job.request_at|date:"SHORT_DATETIME_FORMAT" }}</td>
+                    <td>
+                        <p class="{% if job.is_old_deadline and not all_tickets_closed %}red-text{% endif %}">{{ job.deadline|date:"SHORT_DATETIME_FORMAT" }}</p>
+                    </td>
+                    <td>
+                        {{ job.request_by }}
+                    </td>
+                    <td>
+                        {% for t in job.get_all_active_tickets %}
+                            <a title="{{ t.name }}" href="{{ t.get_absolute_url }}">{{ t.name|truncatechars:20 }}</a> {% if not forloop.last %}<br />{% endif %}
+                        {% empty %}
+                            {% if not all_tickets_closed %}
+                                {% if user in project.get_write_users %}
+                                    <a class="btn" href="{% url 'ticket_add' project__slug=project.slug pk=job.pk %}">Ticket erstellen</a>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                </tr>
 
-                    </p>
-                </td>
-                <td>{{ job.job_type }}</td>
-                <td>{{ job.request_at }}</td>
-                <td>
-                    <p class="{% if job.is_old_deadline %}red-text{% endif %}">{{ job.deadline }}</p>
-                </td>
-                <td>
-                    {{ job.request_by }}
-                </td>
-                <td>
-                    {% for t in job.get_all_active_tickets %}
-                        <a href="{{ t.get_absolute_url }}">{{ t.name }}</a>
-                    {% empty %}
-                        {% if user in project.get_write_users %}
-                            <a class="btn" href="{% url 'ticket_add' project__slug=project.slug pk=job.pk %}">Ticket erstellen</a>
-                        {% endif %}
-                    {% endfor %}
-                </td>
-            </tr>
+            {% endwith %}
 
         {% empty %}
             <tr>
