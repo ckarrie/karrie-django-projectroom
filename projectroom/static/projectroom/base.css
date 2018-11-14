@@ -4,7 +4,7 @@
 }
 
 body {
-    background: url('http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/ui-lightness/images/ui-bg_diagonals-thick_20_666666_40x40.png') repeat scroll 50% 50% #666666;
+    background: url('/static/js/jquery-ui-1.10.3/themes/ui-lightness/images/ui-bg_diagonals-thick_20_666666_40x40.png') repeat scroll 50% 50% #666666;
     text-align: center;
 }
 
