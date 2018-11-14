@@ -367,3 +367,10 @@ tr.ticket-close td {
 .djangoform input:focus, .djangoform select:focus {
     border-color: #ff5500;
 }
+
+
+.formset-item {
+    border: 1px solid #2e2e2e;
+    margin: 10px 10px 10px 100px;
+    background-color: rgba(172, 221, 231, 0.45);
+}

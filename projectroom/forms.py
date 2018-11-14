@@ -1,3 +1,5 @@
+from django.forms import inlineformset_factory
+
 __author__ = 'christian'
 
 from django import forms
@@ -96,3 +98,16 @@ class JobForm(forms.ModelForm):
     class Meta:
         fields = '__all__'
         model = models.Job
+
+
+class JobFileForm(forms.ModelForm):
+    class Meta:
+        fields = ('filefield', 'description')
+        model = models.JobFile
+
+
+JobFileFormSet = inlineformset_factory(models.Job, models.JobFile, form=JobFileForm, extra=1)
+
+
+
+

@@ -8,10 +8,18 @@
         <h2>Auftrag erstellen</h2>
     {% endif %}
 
-    <form action="{{ object.get_edit_url }}" method="post" class="djangoform">
+    <form action="{{ object.get_edit_url }}" method="post" class="djangoform" enctype="multipart/form-data">
 
         {% csrf_token %}
         {% include 'projectroom/includes/djangoform_table.html' %}
+
+        {{ jobfile_fs.management_form }}
+
+        {% for fs in jobfile_fs %}
+            <div class="formset-item">
+                {% include 'projectroom/includes/djangoform_table.html' with form=fs %}
+            </div>
+        {% endfor %}
 
         <input type="submit" value="Speichern" />
 

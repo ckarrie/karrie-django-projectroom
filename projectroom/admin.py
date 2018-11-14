@@ -14,6 +14,11 @@ force_save.short_description = 'Erneut Speichern'
 
 admin.site.add_action(force_save)
 
+
+class JobFileAdmin(admin.ModelAdmin):
+    list_display = ['job', 'filefield', 'is_image']
+
+
 admin.site.register(models.Company)
 admin.site.register(models.Person)
 admin.site.register(models.Project)
@@ -21,6 +26,7 @@ admin.site.register(models.Account)
 admin.site.register(models.AccountEntry)
 admin.site.register(models.Rate)
 admin.site.register(models.Job)
+admin.site.register(models.JobFile, JobFileAdmin)
 admin.site.register(models.JobType)
 admin.site.register(models.Ticket)
 admin.site.register(models.TicketItem)

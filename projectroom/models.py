@@ -9,7 +9,7 @@ from django.utils.translation import ugettext as _
 from mptt.models import TreeForeignKey, MPTTModel, TreeManager
 
 # python imports
-import datetime
+import os
 
 JOB_STATUS_CHOICES = (
     (1, _('Requested by Customer')),
@@ -152,6 +152,9 @@ class Job(MPTTModel):
     def is_old_deadline(self):
         return self.deadline < timezone.now()
 
+    def get_aggregated_duration_pre(self):
+        return self.get_all_tickets().aggregate(sum_duration_pre=models.Sum('duration_pre')).get('sum_duration_pre') or 0
+
     @models.permalink
     def get_absolute_url(self):
         return ('job', [], {'pk': self.pk, 'project__slug': self.project.slug})
@@ -162,6 +165,24 @@ class Job(MPTTModel):
 
     def __unicode__(self):
         return self.name
+
+
+class JobFile(models.Model):
+    job = models.ForeignKey(Job)
+    filefield = models.FileField(upload_to='jobfile', verbose_name=_('File'))
+    description = models.TextField(null=True, blank=True, verbose_name=_('Description'))
+
+    def is_image(self):
+        if self.filefield:
+            fn, ext = os.path.splitext(self.filefield.path)
+            ext = ext.lower()
+            if ext in ['.jpg', '.png']:
+                return True
+        return False
+
+    def get_basename(self):
+        if self.filefield:
+            return os.path.basename(self.filefield.path)
 
 
 class TicketManager(models.Manager):
@@ -188,6 +209,9 @@ class Ticket(models.Model):
 
     def progress(self):
         return float(self.status) / float(JOB_STATUS_LEN) * 100.0
+
+    def progress_int(self):
+        return int(self.progress())
 
     def get_costs(self):
         return self.job.rate.hourly_rate * self.duration_pre

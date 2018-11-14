@@ -1,5 +1,7 @@
 from braces.views import LoginRequiredMixin
+from django.db import transaction
 from django.db.models import Q
+from django.forms import modelformset_factory, inlineformset_factory
 from django.utils import timezone
 from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
@@ -72,6 +74,19 @@ class JobCreateView(LoginRequiredView, generic.CreateView):
         })
         return init
 
+    def get_context_data(self, **kwargs):
+        ctx = super(JobCreateView, self).get_context_data(**kwargs)
+        jobfile_fs = forms.JobFileFormSet(instance=self.object)
+
+        if self.request.POST:
+            jobfile_fs = forms.JobFileFormSet(self.request.POST, self.request.FILES, instance=self.object)
+
+        ctx.update({
+            'jobfile_fs': jobfile_fs
+        })
+
+        return ctx
+
     def get_possible_accounts(self):
         project = models.Project.objects.get(slug=self.kwargs.get('project__slug'))
         return models.Account.objects.filter(project=project)
@@ -85,12 +100,20 @@ class JobCreateView(LoginRequiredView, generic.CreateView):
         return kwargs
 
     def form_valid(self, form):
-        obj = form.save(commit=False)
+        self.object = form.save(commit=False)
         project = models.Project.objects.get(slug=self.kwargs.get('project__slug'))
-        obj.request_by = models.Person.objects.get(user=self.request.user)
-        obj.project = project
-        obj.save()
-        return HttpResponseRedirect(reverse('job', kwargs={'project__slug': project.slug, 'pk': obj.pk}))
+        self.object.request_by = models.Person.objects.get(user=self.request.user)
+        self.object.project = project
+        context = self.get_context_data()
+        jobfile_fs = context['jobfile_fs']
+        with transaction.atomic():
+            self.object.save()
+
+            if jobfile_fs.is_valid():
+                jobfile_fs.instance = self.object
+                jobfile_fs.save()
+
+        return HttpResponseRedirect(reverse('job', kwargs={'project__slug': project.slug, 'pk': self.object.pk}))
 
 
 class JobDetailView(LoginRequiredView, generic.DetailView):
@@ -113,6 +136,30 @@ class JobDetailView(LoginRequiredView, generic.DetailView):
 class JobUpdateView(LoginRequiredView, generic.UpdateView):
     form_class = forms.JobForm
     model = models.Job
+
+    def get_context_data(self, **kwargs):
+        ctx = super(JobUpdateView, self).get_context_data(**kwargs)
+        jobfile_fs = forms.JobFileFormSet(instance=self.object)
+
+        if self.request.POST:
+            jobfile_fs = forms.JobFileFormSet(self.request.POST, self.request.FILES, instance=self.object)
+
+        ctx.update({
+            'jobfile_fs': jobfile_fs
+        })
+
+        return ctx
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        jobfile_fs = context['jobfile_fs']
+        with transaction.atomic():
+            self.object = form.save()
+
+            if jobfile_fs.is_valid():
+                jobfile_fs.instance = self.object
+                jobfile_fs.save()
+        return super(JobUpdateView, self).form_valid(form)
 
 
 class TicketDetailView(LoginRequiredView, generic.DetailView):

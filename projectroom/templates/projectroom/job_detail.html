@@ -1,4 +1,5 @@
 {% extends 'projectroom/base.html' %}
+
 {% load mptt_tags %}
 
 {% block breadcrumbs %}
@@ -12,7 +13,13 @@
 {% endblock %}
 
 {% block js %}
-
+<script type="text/javascript">
+    $(function () {
+        $(".progressbar").progressbar({
+            value: parseInt($(this).attr('data-value'), 10)
+        });
+    });
+</script>
 {% endblock js %}
 
 {% block content %}
@@ -49,6 +56,26 @@
             <tr>
                 <th>Tarif</th>
                 <td>{{ object.rate }}</td>
+            </tr>
+
+            <tr>
+                <th>Dateien</th>
+                <td>
+                    <ul>
+                        {% for jf in object.jobfile_set.all %}
+                            {% if jf.is_image %}
+                                <li><a data-lightbox="ticketfile" href="{{ jf.filefield.url }}"><img src="{{ jf.filefield.url }}" style="max-height: 50px; max-width: 50px;"></a></li>
+                            {% else %}
+                                <li><a href="{{ jf.filefield.url }}" target="_blank">{{ jf.get_basename }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+
+            <tr>
+                <th>Veranschlagte Zeit</th>
+                <td>{{ object.get_aggregated_duration_pre }} Stunde(n)</td>
             </tr>
 
             <tr>
@@ -98,6 +125,8 @@
         <th>Status</th>
         <th>AG</th>
         <th>AN</th>
+        <th>Fortschritt</th>
+        <th>Veranschl.</th>
     </tr>
     </thead>
     <tbody>
@@ -111,11 +140,20 @@
                 {{ j|truncatechars:5 }} &gt;
                 {% endfor %}
 
-                {{ ticket.job }}</a></td>
+                {{ ticket.job|truncatechars:20 }}</a></td>
         <td><a href="{{ ticket.get_absolute_url }}">{{ ticket.name }}</a></td>
         <td>{{ ticket.get_status_display }}</td>
         <td>{{ ticket.request_by }}</td>
         <td>{{ ticket.assigned_to }}</td>
+        <td>
+            <div class="progressbar" data-value="{{ ticket.progress_int }}">
+                <div class="progress-label">{{ ticket.progress_int }}%</div>
+
+            </div>
+        </td>
+        <td>
+            {{ ticket.duration_pre }} h
+        </td>
     </tr>
 
     {% empty %}
