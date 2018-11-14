@@ -31,8 +31,8 @@ class DashboardView(LoginRequiredView, generic.TemplateView):
             project__in=my_projects,
             ticket__status__lt=models.JOB_STATUS_LEN,
             ticket__assigned_to__user=user
-        ).distinct().order_by('-deadline')
-        
+        ).distinct().order_by('deadline')
+
         kwargs.update({
             'my_projects': my_projects,
             'latest_ticketitems': models.TicketItem.objects.filter(ticket__hidden=False, ticket__job__project__in=my_projects).order_by('-created')[:5],
