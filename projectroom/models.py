@@ -175,8 +175,8 @@ class Ticket(models.Model):
     request_by = models.ForeignKey(Person, related_name='requested_tickets', verbose_name=_('Requested by'))
     status = models.IntegerField(choices=JOB_STATUS_CHOICES, verbose_name=_('Ticket status'))
     assigned_to = models.ForeignKey(Person, related_name='assigned_tickets', null=True, blank=True, verbose_name=_('Assigned to'))
-    duration_pre = models.IntegerField(null=True, blank=True, verbose_name=_('valued effort'))
-    duration_post = models.IntegerField(null=True, blank=True, verbose_name=_('actual effort'))
+    duration_pre = models.DecimalField(decimal_places=2, max_digits=8, null=True, blank=True, verbose_name=_('valued effort'))
+    duration_post = models.DecimalField(decimal_places=2, max_digits=8, null=True, blank=True, verbose_name=_('actual effort'))
 
     hidden = models.BooleanField(default=False)
 
