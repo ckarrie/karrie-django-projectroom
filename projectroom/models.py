@@ -2,6 +2,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 
 # django-apps
@@ -212,6 +213,10 @@ class Ticket(models.Model):
 
     def progress_int(self):
         return int(self.progress())
+
+    def progress_pipe(self):
+        p = self.progress_int() / 10
+        return mark_safe('|' * p + '&nbsp;' * (10 - p))
 
     def get_costs(self):
         return self.job.rate.hourly_rate * self.duration_pre

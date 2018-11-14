@@ -7,15 +7,15 @@
 
 {% block js %}
 <style type="text/css">
+
     #ticketitems {
-        float: left;
-        width: 50em;
+        width: 45em;
     }
 
     #sidebar {
         float: right;
-        width: 20em;
-        background:#eee;
+        width: 25em;
+        background: #eee;
         padding: 1em;
         margin: 1em;
         border: 1px solid #aaa;
@@ -27,62 +27,96 @@
 
 {% block content %}
 
-    <h2>Dashboard</h2>
+<h2>Dashboard</h2>
 
-    <div id="ticketitems">
-        <h3>Neuste Änderungen</h3>
-        {% for item in latest_ticketitems %}
-            <div class="ticketitem">
-                <p class="ticketitemmeta">Vor {{ item.created|timesince }} von {{ item.creator }} in <br />
-                    <a href="{% url 'job_list' project__slug=item.ticket.job.project.slug %}">{{ item.ticket.job.project }}</a> /
-
-                    {% for job in item.ticket.job.get_path %}
-                        <a href="{{ job.get_absolute_url }}">{{ job }}</a>
-                        {% if not forloop.last %}
-                            &raquo;
-                        {% endif %}
-                    {% endfor %}
-                </p>
-                <p><a href="{{ item.ticket.get_absolute_url }}">Ticket #{{ item.ticket.pk }}: {{ item.ticket }}</a></p>
-
-                {% if item.tickettext_set.exists %}
-                    <blockquote>Änderung:
-                        <q>{{ item.tickettext_set.first.text|truncatewords:8 }}</q>
-                    </blockquote>
-                {% endif %}
-
-                {% if item.ticketstatuschange_set.exists %}
-                    <blockquote>Status auf <q>{{ item.ticketstatuschange_set.first.get_post_status_display }}</q></blockquote>
-                {% endif %}
-
-                {% if item.ticketaccountentry_set.exists %}
-                    <blockquote>
-                        <p>
-                        Abbuchung von {{ item.ticketaccountentry_set.first.accountentry.value }} {{ item.ticketaccountentry_set.first.accountentry.get_currency_display }}
-                        von Konto {{ item.ticketaccountentry_set.first.accountentry.account }} erfolgt
-                        </p>
-                    </blockquote>
-                {% endif %}
-            </div>
-
-        {% empty %}
-            <p>Es existiert keine Ticketbeschreibung</p>
-        {% endfor %}
-
-    </div>
-
-    <div id="sidebar" class="border-radius">
-        <h3>Meine Projekte</h3>
-        <ul>
+<div id="sidebar" class="border-radius">
+    <h3>Meine Projekte</h3>
+    <ul>
         {% for project in my_projects %}
-            <li><a href="{% url 'job_list' project__slug=project.slug %}">{{ project }}</a> <span class="small">({{ project.client_company }})</span></li>
+        <li><a href="{% url 'job_list' project__slug=project.slug %}">{{ project }}</a> <span class="small">{{ project.client_company }}</span></li>
         {% endfor %}
-        </ul>
-        <p>&nbsp;</p>
-        <p><a href="{% url 'project_list' %}" class="btn">Übersicht</a></p>
+    </ul>
+    <p>&nbsp;</p>
+    <p><a href="{% url 'project_list' %}" class="btn">Übersicht</a></p>
+</div>
+
+<div id="ticketitems">
+    <h3>Neuste Änderungen</h3>
+    {% for item in latest_ticketitems %}
+    <div class="ticketitem">
+        <p class="ticketitemmeta">Vor {{ item.created|timesince }} von {{ item.creator }} in <br/>
+            <a href="{% url 'job_list' project__slug=item.ticket.job.project.slug %}">{{ item.ticket.job.project }}</a> /
+
+            {% for job in item.ticket.job.get_path %}
+            <a href="{{ job.get_absolute_url }}">{{ job }}</a>
+            {% if not forloop.last %}
+            &raquo;
+            {% endif %}
+            {% endfor %}
+        </p>
+        <p><a href="{{ item.ticket.get_absolute_url }}">Ticket #{{ item.ticket.pk }}: {{ item.ticket }}</a></p>
+
+        {% if item.tickettext_set.exists %}
+        <blockquote>Änderung:
+            <q>{{ item.tickettext_set.first.text|truncatewords:8 }}</q>
+        </blockquote>
+        {% endif %}
+
+        {% if item.ticketstatuschange_set.exists %}
+        <blockquote>Status auf <q>{{ item.ticketstatuschange_set.first.get_post_status_display }}</q></blockquote>
+        {% endif %}
+
+        {% if item.ticketaccountentry_set.exists %}
+        <blockquote>
+            <p>
+                Abbuchung von {{ item.ticketaccountentry_set.first.accountentry.value }} {{ item.ticketaccountentry_set.first.accountentry.get_currency_display }}
+                von Konto {{ item.ticketaccountentry_set.first.accountentry.account }} erfolgt
+            </p>
+        </blockquote>
+        {% endif %}
     </div>
 
-    <div style="clear: both;"></div>
+    {% empty %}
+    <p>Es existiert keine Ticketbeschreibung</p>
+    {% endfor %}
+
+
+</div>
+
+<h3>Meine offenen Jobs und Tickets</h3>
+
+<table>
+    <tr>
+        <th>Projekt</th>
+        <th>Job</th>
+        <th>AG</th>
+        <th>Deadline</th>
+        <th>Tickets</th>
+    </tr>
+    {% for job in my_open_jobs %}
+    <tr>
+        <td><a href="{% url 'job_list' project__slug=job.project.slug %}">{{ job.project }}</a></td>
+        <td><a href="{{ job.get_absolute_url }}">{{ job }}</a></td>
+        <td>{{ job.request_by }}</td>
+        <td>
+                            <span class="{% if job.is_old_deadline %}old-deadline{% endif %}">
+                                {{ job.deadline|date:"SHORT_DATETIME_FORMAT" }}
+                            </span>
+        </td>
+        <td>
+            <ul>
+                {% for ticket in job.get_all_active_tickets %}
+                <li><span style="border: 1px solid black; font-size: small; padding: 2px;" title="{{ ticket.progress_int }} %">{{ ticket.progress_pipe }}</span> <a href="{% url 'ticket' project__slug=job.project.slug job__pk=job.pk pk=ticket.pk %}">{{ ticket }}</a></li>
+                {% endfor %}
+            </ul>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+
+
+<div style="clear: both;"></div>
 
 
 {% endblock %}

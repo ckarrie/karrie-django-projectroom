@@ -54,7 +54,10 @@
     </div>
 
     <div id="footer">
-        <p style="text-align: center">&copy; 2013 Christian Karrié &middot; <a href="https://bitbucket.org/ckarrie/karrie-django-projectroom">Code karrie-django-projectroom</a></p>
+        <p style="text-align: center">
+            &copy; 2013 - 2018 Christian Karrié &middot; <a href="https://bitbucket.org/ckarrie/karrie-django-projectroom">Code karrie-django-projectroom</a>
+            &middot; {% if is_secure %}<span style="color: greenyellow">&check; SSL gesichert</span>{% else %}Ungesichert{% endif %}
+        </p>
 
     </div>
 

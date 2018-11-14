@@ -15,6 +15,11 @@ class LoginRequiredView(LoginRequiredMixin):
     login_url = '/login'
     raise_exception = False
 
+    def get_context_data(self, **kwargs):
+        ctx = super(LoginRequiredView, self).get_context_data(**kwargs)
+        ctx.update({'is_secure': self.request.is_secure()})
+        return ctx
+
 
 class DashboardView(LoginRequiredView, generic.TemplateView):
     template_name = 'projectroom/dashboard.html'
@@ -22,9 +27,15 @@ class DashboardView(LoginRequiredView, generic.TemplateView):
     def get_context_data(self, **kwargs):
         user = self.request.user
         my_projects = models.Project.objects.filter(Q(read_acl__user=user) | Q(write_acl__user=user)).distinct()
+        my_open_jobs = models.Job.objects.filter(
+            project__in=my_projects,
+            ticket__status__lt=models.JOB_STATUS_LEN,
+            ticket__assigned_to__user=user
+        )
         kwargs.update({
             'my_projects': my_projects,
-            'latest_ticketitems': models.TicketItem.objects.filter(ticket__hidden=False, ticket__job__project__in=my_projects).order_by('-created')[:25]
+            'latest_ticketitems': models.TicketItem.objects.filter(ticket__hidden=False, ticket__job__project__in=my_projects).order_by('-created')[:5],
+            'my_open_jobs': my_open_jobs
         })
         return super(DashboardView, self).get_context_data(**kwargs)
 

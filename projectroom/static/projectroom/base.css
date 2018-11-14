@@ -28,6 +28,13 @@ a.btn:link {
     border-radius: 15px;
 }
 
+.old-deadline {
+    background-color: red;
+    color: white;
+    font-size: small;
+    padding: 2px;
+}
+
 #page {
     background-color: #FFF;
     border-left: 2px solid #AAAAAA;
