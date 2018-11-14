@@ -13,6 +13,7 @@ admin.autodiscover()
 urlpatterns = [
     url(r'^$', views.DashboardView.as_view(), name='dashboard'),
     url(r'^projects$', views.ProjectListView.as_view(), name='project_list'),
+    url(r'^closed', views.ClosedJobsListView.as_view(), name='closed_jobs'),
     url(r'^login$', login, {'template_name': 'projectroom/login.html'}, name="pr_login"),
     url(r'^logout$', logout, {'template_name': 'projectroom/logout.html'}, name="pr_logout"),
     #url(r'^(?P<slug>[-\w]+)/$', views.ProjectDetailView.as_view(), name='project'),
@@ -22,6 +23,7 @@ urlpatterns = [
     url(r'^(?P<project__slug>[-\w]+)/job/(?P<pk>[\d]+)/edit$', views.JobUpdateView.as_view(), name='job_edit'),
     url(r'^(?P<project__slug>[-\w]+)/job/(?P<pk>[\d]+)/add', views.TicketCreateView.as_view(), name='ticket_add'),
     url(r'^(?P<project__slug>[-\w]+)/job/(?P<job__pk>[\d]+)/ticket/(?P<pk>[\d]+)$', views.TicketDetailView.as_view(), name='ticket'),
+    url(r'^(?P<project__slug>[-\w]+)/job/(?P<job__pk>[\d]+)/ticket/(?P<pk>[\d]+)/edit$', views.TicketEditView.as_view(), name='ticket_edit'),
     url(r'^(?P<project__slug>[-\w]+)/job/(?P<job__pk>[\d]+)/ticket/(?P<pk>[\d]+)/add$', views.TicketItemCreateView.as_view(), name='ticketitem_add'),
     #(r'^js/(?P<script>[-\w]+)\.js', 'finance.views.js'),
     #(r'^json/', 'finance.views.json')

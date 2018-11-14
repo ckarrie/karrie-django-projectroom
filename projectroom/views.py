@@ -1,4 +1,5 @@
 from braces.views import LoginRequiredMixin
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.db import transaction
 from django.db.models import Q
 from django.forms import modelformset_factory, inlineformset_factory
@@ -49,6 +50,21 @@ class ProjectListView(LoginRequiredView, generic.ListView):
         qs = super(ProjectListView, self).get_queryset()
         qs = qs.filter(Q(read_acl__user=user) | Q(write_acl__user=user)).distinct()
 
+        return qs
+
+
+class ClosedJobsListView(LoginRequiredMixin, generic.ListView):
+    model = models.Ticket
+    template_name = 'projectroom/closed_jobs_list.html'
+
+    def get_queryset(self):
+        user = self.request.user
+        qs = super(ClosedJobsListView, self).get_queryset()
+        my_projects = models.Project.objects.filter(Q(read_acl__user=user) | Q(write_acl__user=user)).distinct()
+        qs = qs.filter(
+            job__project__in=my_projects,
+            status__gte=models.JOB_STATUS_LEN
+        ).order_by('status_update')
         return qs
 
 
@@ -190,7 +206,8 @@ class TicketDetailView(LoginRequiredView, generic.DetailView):
                 'ticket': self.object,
                 'creator': models.Person.objects.get(user=self.request.user),
                 'status': self.object.status
-            })
+            }),
+            'assigned_to_me': self.object.assigned_to.user == self.request.user
         })
         return super(TicketDetailView, self).get_context_data(**kwargs)
 
@@ -206,6 +223,19 @@ class TicketCreateView(LoginRequiredView, generic.CreateView):
             'request_by': models.Person.objects.get(user=self.request.user),
             'status': 1
         }
+
+
+class TicketEditView(LoginRequiredMixin, generic.UpdateView, UserPassesTestMixin):
+    model = models.Ticket
+    form_class = forms.TicketEditForm
+
+    def test_func(self):
+        return self.object.assigned_to.user == self.request.user
+
+    def get_initial(self):
+        init = super(TicketEditView, self).get_initial()
+        init.update({'text': self.object.ticketitem_set.first().tickettext_set.first().text})
+        return init
 
 
 class TicketItemCreateView(LoginRequiredView, generic.CreateView):

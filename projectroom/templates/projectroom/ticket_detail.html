@@ -1,39 +1,68 @@
 {% extends 'projectroom/base.html' %}
 
 {% block breadcrumbs %}
-    <li><a href="{% url 'job_list' project__slug=object.job.project.slug %}">{{ object.job.project }}</a></li>
-    {% for parent in object.job.get_ancestors %}
-    <li>
-        <a href="{{ parent.get_absolute_url }}">{{ parent.name }}</a>
-    </li>
-    {% endfor %}
-    <li><a href="{{ object.job.get_absolute_url }}">{{ object.job }}</a></li>
-    <li><a href="">{{ object }}</a></li>
+<li><a href="{% url 'job_list' project__slug=object.job.project.slug %}">{{ object.job.project }}</a></li>
+{% for parent in object.job.get_ancestors %}
+<li>
+    <a href="{{ parent.get_absolute_url }}">{{ parent.name }}</a>
+</li>
+{% endfor %}
+<li><a href="{{ object.job.get_absolute_url }}">{{ object.job }}</a></li>
+<li><a href="">{{ object }}</a></li>
 {% endblock %}
 
 {% block content %}
 
 <h2>Ticket #{{ object.pk }}: {{ object.name }}</h2>
 
-<table>
-    <tr>
-        <th>Status</th>
-        <td>{{ object.get_status_display }} ({{ object.progress|floatformat }}%)</td>
-        <th>Auftraggeber</th>
-        <td>{{ object.request_by }}</td>
-    </tr>
-    <tr>
-        <th>Veranschlagte Zeit</th>
-        <td>{{ object.duration_pre }}h</td>
-        <th>Auftragnehmer</th>
-        <td>{{ object.assigned_to }}</td>
-    </tr>
+<div id="tabs">
+    <ul>
+        <li><a href="#details">Ticket-Details</a></li>
+    </ul>
 
-</table>
+    <div id="details">
 
-<h2>Kosten</h2>
-<p>Tarif: {{ object.job.rate }}, Konto: {{ object.job.account }} (Stand: {{ object.job.account.balance }} {{ object.job.account.get_currency_display }})</p>
-<pre>Veranschlagung: {{ object.duration_pre }}h * {{ object.job.rate }} = {{ object.get_costs }} {{ object.job.rate.get_currency_display }}</pre>
+        <table>
+            <tr>
+                <th>Status</th>
+                <td>{{ object.get_status_display }} ({{ object.progress|floatformat }}%)</td>
+                <th>Auftraggeber</th>
+                <td>{{ object.request_by }}</td>
+                <th>Auftragnehmer</th>
+                <td>{{ object.assigned_to }} {% if assigned_to_me %}<strong>*ich*</strong>{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Veranschlagte Zeit</th>
+                <td>{{ object.duration_pre }} h</td>
+                <th>Tatsächliche Zeit</th>
+                <td>{{ object.duration_post|default:0 }} h</td>
+                <th>Tarif</th>
+                <td>{{ object.job.rate }}</td>
+            </tr>
+            <tr>
+                <th>Veranschlagte Kosten</th>
+                <td colspan="4">
+                    {{ object.duration_pre|floatformat:2 }}h * {{ object.job.rate }} = {{ object.get_costs|floatformat:2 }} {{ object.job.rate.get_currency_display }}
+                </td>
+            </tr>
+            {% if assigned_to_me %}
+            <tr>
+                <td colspan="6">
+
+                    <a href="{% url 'ticket_edit' project__slug=object.job.project.slug job__pk=object.job.pk pk=object.pk %}" class="btn">Ticket anpassen</a>
+
+                </td>
+            </tr>
+            {% endif %}
+
+
+        </table>
+
+    </div>
+
+
+</div>
+
 
 <h2>Verlauf</h2>
 
@@ -43,7 +72,7 @@
     {% for text in item.tickettext_set.all %}
         <pre>{{ text.text }}</pre>
     {% endfor %}
-
+    
     {% for sc in item.ticketstatuschange_set.all %}
         <pre class="statuschange small">Der Status wurde von <i>{{ sc.get_pre_status_display }}</i> auf <strong>{{ sc.get_post_status_display }}</strong> geändert.</pre>
     {% endfor %}
@@ -59,8 +88,6 @@
 
 <h2>Ticketeintrag hinzufügen</h2>
 {% if user in object.job.project.get_read_users %}
-
-
 <form action="{% url 'ticketitem_add' project__slug=object.job.project.slug job__pk=object.job.pk pk=object.pk %}" method="post">
     {% csrf_token %}
     {% include 'projectroom/includes/djangoform_table.html' with form=ticket_form %}

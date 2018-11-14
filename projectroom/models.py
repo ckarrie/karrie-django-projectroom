@@ -1,6 +1,7 @@
 # django imports
 from django.db import models
 from django.contrib.auth.models import User
+from django.template.defaultfilters import floatformat
 from django.utils import timezone
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
@@ -109,7 +110,7 @@ class Rate(models.Model):
 
     def __unicode__(self):
         return _('%(hr)s %(c)s/h') % {
-            'hr': self.hourly_rate,
+            'hr': floatformat(self.hourly_rate, 2),
             'c': self.get_currency_display()
         }
 
@@ -196,6 +197,7 @@ class Ticket(models.Model):
     name = models.CharField(max_length=255, verbose_name=_('Ticket name'))
     request_by = models.ForeignKey(Person, related_name='requested_tickets', verbose_name=_('Requested by'))
     status = models.IntegerField(choices=JOB_STATUS_CHOICES, verbose_name=_('Ticket status'))
+    status_update = models.DateTimeField(null=True, blank=True)
     assigned_to = models.ForeignKey(Person, related_name='assigned_tickets', null=True, blank=True, verbose_name=_('Assigned to'))
     duration_pre = models.DecimalField(decimal_places=2, max_digits=8, null=True, blank=True, verbose_name=_('valued effort'))
     duration_post = models.DecimalField(decimal_places=2, max_digits=8, null=True, blank=True, verbose_name=_('actual effort'))
@@ -207,6 +209,7 @@ class Ticket(models.Model):
     def update_status(self):
         tsc = TicketStatusChange.objects.filter(item__ticket=self).latest('item__created')
         self.status = tsc.post_status
+        self.status_update = timezone.now()
 
     def progress(self):
         return float(self.status) / float(JOB_STATUS_LEN) * 100.0
@@ -236,6 +239,9 @@ class Ticket(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('ticket', [], {'pk': self.pk, 'project__slug': self.job.project.slug, 'job__pk': self.job.pk})
+
+    def get_last_ticketitem(self):
+        return self.ticketitem_set.order_by('created').last()
 
 
 class TicketItem(models.Model):

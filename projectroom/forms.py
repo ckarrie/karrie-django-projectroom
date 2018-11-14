@@ -44,6 +44,7 @@ class TicketForm(forms.ModelForm):
     text = forms.CharField(widget=forms.Textarea)
 
     def __init__(self, *args, **kwargs):
+        full_edit = kwargs.pop('full_edit', False)
         super(TicketForm, self).__init__(*args, **kwargs)
 
         instance = kwargs.get('instance')
@@ -53,8 +54,7 @@ class TicketForm(forms.ModelForm):
         self.fields['status'].widget = forms.HiddenInput()
         self.fields['hidden'].widget = forms.HiddenInput()
 
-        if not instance:
-
+        if (not instance) and (not full_edit):
             self.fields['duration_post'].widget = forms.HiddenInput()
 
     def clean(self):
@@ -82,12 +82,18 @@ class TicketForm(forms.ModelForm):
         model = models.Ticket
 
 
+class TicketEditForm(forms.ModelForm):
+
+    class Meta:
+        model = models.Ticket
+        fields = ('name', 'duration_post')
+
+
 class CreateJobForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         possible_accounts = kwargs.pop('possible_accounts', None)
         super(CreateJobForm, self).__init__(*args, **kwargs)
         self.fields['account'].queryset = possible_accounts
-
 
     class Meta:
         fields = ('job_type', 'parent', 'name', 'description', 'deadline', 'rate', 'account')

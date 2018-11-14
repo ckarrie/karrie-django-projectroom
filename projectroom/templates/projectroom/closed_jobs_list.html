@@ -1,0 +1,33 @@
+{% extends 'projectroom/base.html' %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+    <li><a href="">Erledigte Aufgaben und Jobs</a></li>
+{% endblock %}
+
+{% block content %}
+<table>
+    <tr>
+        <th>Projekt</th>
+        <th>Job</th>
+        <th>Ticket</th>
+        <th>Erledigt am</th>
+        <th>{% trans 'valued effort' %}</th>
+        <th>{% trans 'actual effort' %}</th>
+    </tr>
+    {% for ticket in object_list %}
+    <tr>
+        <td>{{ ticket.job.project }}</td>
+        <td><a href="{{ ticket.job.get_absolute_url }}" title="{{ ticket.job }}">{{ ticket.job }}</a></td>
+        <td><a href="{{ ticket.get_absolute_url }}" title="{{ ticket }}">#{{ ticket.id }}: {{ ticket }}</a></td>
+        <td>
+            {% with ti=ticket.get_last_ticketitem %}
+                {{ ti.created|date:"SHORT_DATETIME_FORMAT" }}
+            {% endwith %}
+        </td>
+        <td>{{ ticket.duration_pre }} h</td>
+        <td>{{ ticket.duration_post|default:0 }} h</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

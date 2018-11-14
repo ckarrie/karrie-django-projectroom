@@ -36,6 +36,11 @@
         <li><a href="{% url 'job_list' project__slug=project.slug %}">{{ project }}</a> <span class="small">{{ project.client_company }}</span></li>
         {% endfor %}
     </ul>
+
+    <h3>Auswertung</h3>
+    <ul>
+        <li><a href="{% url 'closed_jobs' %}">Erledigte Aufgaben und Tickets</a></li>
+    </ul>
     <p>&nbsp;</p>
     <p><a href="{% url 'project_list' %}" class="btn">Übersicht</a></p>
 </div>
