@@ -50,18 +50,11 @@ class TicketForm(forms.ModelForm):
         instance = kwargs.get('instance')
 
         self.fields['job'].widget = forms.HiddenInput()
-        self.fields['request_by'].widget = forms.HiddenInput()
         self.fields['status'].widget = forms.HiddenInput()
         self.fields['hidden'].widget = forms.HiddenInput()
 
         if (not instance) and (not full_edit):
             self.fields['duration_post'].widget = forms.HiddenInput()
-
-    def clean(self):
-        cd = self.cleaned_data
-        request_by = cd.get('request_by')
-        #cd.update({'assigned_to': request_by})
-        return cd
 
     def save(self, **kwargs):
         cd = self.cleaned_data
@@ -70,7 +63,7 @@ class TicketForm(forms.ModelForm):
         ticket_instance = super(TicketForm, self).save(**kwargs)
 
         if text:
-            ti = models.TicketItem(ticket=ticket_instance, creator=ticket_instance.request_by)
+            ti = models.TicketItem(ticket=ticket_instance, creator=ticket_instance.job.request_by)
             ti.save()
             tt = models.TicketText(item=ti, text=text)
             tt.save()

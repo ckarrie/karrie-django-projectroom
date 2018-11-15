@@ -228,7 +228,6 @@ class TicketCreateView(LoginRequiredView, generic.CreateView):
         job = models.Job.objects.get(pk=self.kwargs.get('pk'), project__slug=self.kwargs.get('project__slug'))
         return {
             'job': job,
-            'request_by': models.Person.objects.get(user=self.request.user),
             'status': 1
         }
 

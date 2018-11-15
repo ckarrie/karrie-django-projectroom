@@ -212,7 +212,6 @@ class TicketManager(models.Manager):
 class Ticket(models.Model):
     job = models.ForeignKey(Job)
     name = models.CharField(max_length=255, verbose_name=_('Ticket name'))
-    request_by = models.ForeignKey(Person, related_name='requested_tickets', verbose_name=_('Requested by'))
     status = models.IntegerField(choices=JOB_STATUS_CHOICES, verbose_name=_('Ticket status'))
     status_update = models.DateTimeField(null=True, blank=True)
     assigned_to = models.ForeignKey(Person, related_name='assigned_tickets', null=True, blank=True, verbose_name=_('Assigned to'))

@@ -143,7 +143,7 @@
                 {{ ticket.job|truncatechars:20 }}</a></td>
         <td><a href="{{ ticket.get_absolute_url }}">{{ ticket.name }}</a></td>
         <td>{{ ticket.get_status_display }}</td>
-        <td>{{ ticket.request_by }}</td>
+        <td>{{ ticket.job.request_by }}</td>
         <td>{{ ticket.assigned_to }}</td>
         <td>
             <div class="progressbar" data-value="{{ ticket.progress_int }}">
