@@ -32,7 +32,7 @@
                     <td>#{{ job.pk }}</td>
                     <td>
                         <a style="padding-left: {{ job.level }}em;" href="{{ job.get_absolute_url }}" title="{{ job.description }}"><strong>{{ job }}</strong></a>
-                        
+
                     </td>
                     <td>{{ job.job_type }}</td>
                     <td>{{ job.request_at|date:"SHORT_DATETIME_FORMAT" }}</td>

@@ -55,7 +55,8 @@ class Person(models.Model):
     company = models.ForeignKey(Company)
 
     def __unicode__(self):
-        return self.user.get_full_name() or self.user.get_username()
+        un = self.user.get_full_name() or self.user.get_username()
+        return un
 
 
 class Project(models.Model):

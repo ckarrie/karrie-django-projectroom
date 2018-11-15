@@ -101,8 +101,18 @@ class CreateJobForm(forms.ModelForm):
 
 
 class JobForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        persons = kwargs.pop('persons', None)
+        possible_accounts = kwargs.pop('possible_accounts', None)
+        super(JobForm, self).__init__(*args, **kwargs)
+        self.fields['request_by'].queryset = persons
+        self.fields['account'].queryset = possible_accounts
+
+        if self.instance:
+            self.fields['parent'].queryset = self.fields['parent'].queryset.filter(project=self.instance.project)
+
     class Meta:
-        fields = '__all__'
+        fields = ('job_type', 'parent', 'name', 'description', 'deadline', 'rate', 'request_by', 'account')
         model = models.Job
 
 

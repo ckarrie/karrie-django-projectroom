@@ -189,6 +189,14 @@ class JobUpdateView(LoginRequiredView, generic.UpdateView):
                 jobfile_fs.save()
         return super(JobUpdateView, self).form_valid(form)
 
+    def get_form_kwargs(self):
+        kwargs = super(JobUpdateView, self).get_form_kwargs()
+        kwargs.update({
+            'persons': self.object.project.client_company.person_set.all(),
+            'possible_accounts': self.object.project.account_set.all()
+        })
+        return kwargs
+
 
 class TicketDetailView(LoginRequiredView, generic.DetailView):
     model = models.Ticket
