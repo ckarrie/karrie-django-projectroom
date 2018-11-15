@@ -27,7 +27,7 @@
                 <th>Status</th>
                 <td>{{ object.get_status_display }} ({{ object.progress|floatformat }}%)</td>
                 <th>Auftraggeber</th>
-                <td>{{ object.request_by }}</td>
+                <td>{{ object.job.request_by }}</td>
                 <th>Auftragnehmer</th>
                 <td>{{ object.assigned_to }} {% if assigned_to_me %}<strong>*ich*</strong>{% endif %}</td>
             </tr>
