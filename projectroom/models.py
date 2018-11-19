@@ -238,7 +238,10 @@ class Ticket(models.Model):
         return mark_safe('|' * p + '&nbsp;' * (10 - p))
 
     def get_costs(self):
-        return self.job.rate.hourly_rate * self.duration_pre
+        duration_pre = self.duration_pre
+        if duration_pre is None:
+            duration_pre = 0
+        return self.job.rate.hourly_rate * duration_pre
 
     def get_read_users(self):
         if self.hidden:
@@ -285,7 +288,7 @@ class TicketStatusChange(models.Model):
         self.item.ticket.save()
 
     def __unicode__(self):
-        return _("%(ticket_name)s: %(pre)s > %(post)s") % {'ticket_name': self.item.ticket.name, 'pre': self.pre_status, 'post': self.post_status}
+        return _("%(ticket_name)s: %(pre)s > %(post)s") % {'ticket_name': self.item.ticket.name, 'pre': self.get_pre_status_display(), 'post': self.get_post_status_display()}
 
 
 class TicketAccountEntry(models.Model):
