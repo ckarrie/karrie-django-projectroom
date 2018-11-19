@@ -83,6 +83,8 @@ def ticketitem_notify_requester(sender, *args, **kwargs):
         for person in apps.get_model('projectroom.Person').objects.filter(user__email__isnull=False, id__in=[ticket.job.request_by.pk]):
             recipient_list.append(person.user.email)
 
+        recipient_list = list(set(recipient_list))
+
         if recipient_list:
             print "Sending ticketitem_notify_requester to", recipient_list
             send_mail(subject=subject, message=message, from_email='noreply@tickets.xn--karri-fsa.de', recipient_list=recipient_list)

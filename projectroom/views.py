@@ -209,13 +209,17 @@ class TicketDetailView(LoginRequiredView, generic.DetailView):
         return obj
 
     def get_context_data(self, **kwargs):
+        assigned_to_me = False
+        if self.object.assigned_to:
+            assigned_to_me = self.object.assigned_to.user == self.request.user
+
         kwargs.update({
             'ticket_form': forms.TicketItemForm(initial={
                 'ticket': self.object,
                 'creator': models.Person.objects.get(user=self.request.user),
                 'status': self.object.status
             }),
-            'assigned_to_me': self.object.assigned_to.user == self.request.user
+            'assigned_to_me': assigned_to_me
         })
         return super(TicketDetailView, self).get_context_data(**kwargs)
 
