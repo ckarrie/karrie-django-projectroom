@@ -1,6 +1,7 @@
 from django.apps import apps
 from django.core.mail import send_mail
 from django.db.models import signals
+from django.template.loader import render_to_string
 from django.utils.translation import ugettext as _
 
 
@@ -62,16 +63,7 @@ def ticketitem_notify_requester(sender, *args, **kwargs):
             'url': url
         }
         subject = _('Ticket changed: %(project)s / %(job)s / %(ticket)s') % msg_data
-        message = _('Hello,\n\n'
-                    'a ticket has been changed.\n\n'
-                    'Link: %(url)s\n'
-                    'Project: %(project)s\n'
-                    'Job: %(job)s\n\n'
-                    + '-' * 50 + '\n'
-                    '== %(ticket)s ==\n\n'
-                    '%(text)s\n'
-                    + '-' * 50 +
-                    '\n\n\n\nSend via https://tickets.xn--karri-fsa.de') % msg_data
+        message = render_to_string(template_name='projectroom/emails/ticket_change.txt', context=msg_data)
 
         recipient_list = []
 

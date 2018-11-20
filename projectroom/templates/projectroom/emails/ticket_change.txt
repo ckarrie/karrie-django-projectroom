@@ -1,0 +1,14 @@
+{% load i18n %}{% blocktrans %}Hello,
+a ticket has been changed.
+
+Link: {{ url }}
+Project: {{ project }}
+Job: {{ job }}
+
+Ticket: {{ ticket }}
+
+{{ text }}
+
+Send via https://tickets.xn--karri-fsa.de
+
+{% endblocktrans %}

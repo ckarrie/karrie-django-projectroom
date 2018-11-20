@@ -288,7 +288,7 @@ class TicketStatusChange(models.Model):
         self.item.ticket.save()
 
     def __unicode__(self):
-        return _("%(ticket_name)s: %(pre)s > %(post)s") % {'ticket_name': self.item.ticket.name, 'pre': self.get_pre_status_display(), 'post': self.get_post_status_display()}
+        return _("%(ticket_name)s: %(pre)s to %(post)s") % {'ticket_name': self.item.ticket.name, 'pre': self.get_pre_status_display(), 'post': self.get_post_status_display()}
 
 
 class TicketAccountEntry(models.Model):
