@@ -15,7 +15,7 @@ setup(
     description='A django app to manage projectrooms',
     long_description=README,
     install_requires=[
-        'django==1.11.23',
+        'django==1.11.29',
         'django-mptt-nomagic',
         'django-braces>=1.13.0'
     ],
